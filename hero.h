@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define MAX_FOOT_DISTANCE 
+#define MAX_FOOT_DISTANCE 1 
 
 void cuboid(float cx,float cy, float cz ,float lx,float ly,float lz,float colors[]);
 
@@ -22,16 +22,19 @@ class heros{
 		double rotate_x;
 		double heroXpos; 
 		double heroYpos;
-		int heroDirection;
+		int heroDirection,heroPrevDirection;
 		bool rightLeg;//true if the right leg should move forward
 		float legdisp;//displacement of the leg from the resting position
+		float speed;
 		heros(){
 			rotate_z=0;
 			rotate_x=0;
 			heroXpos=-8;
 			heroYpos=5;
 			heroDirection=0;
-			legdisp=1;
+			heroPrevDirection=0;
+			legdisp=0;
+			speed=0.1;
 		}
 		void displayhero(){
 		 	//glTranslatef(0,5,0);
@@ -57,18 +60,16 @@ class heros{
 			cuboid(0,-2.8,0,2,1.9,0.8,shirt);//stomach
 			cuboid(-2.375,-1.6,0,0.375,0.7,0.6,shirt);//left shoulder
 			cuboid(2.375,-1.6,0,0.375,0.7,0.6,shirt);//right shoulder
-			limbs(2.375,-3.2,0,0.3,0.9,0.4,-legdisp,face);//left hand
-			limbs(-2.375,-3.2,0,0.3,0.9,0.4,legdisp,face);//right hand
-			cuboid(-2.375,-4.4,0,0.35,0.3,0.5,neck);//left palm
-			cuboid(2.375,-4.4,0,0.35,0.3,0.5,neck);//right palm
+			limbs(2.375,-3.2,0,0.3,0.9,0.4,legdisp,face);//left hand
+			limbs(-2.375,-3.2,0,0.3,0.9,0.4,-legdisp,face);//right hand
+			cuboid(-2.375,-4.4,legdisp,0.35,0.3,0.5,neck);//left palm
+			cuboid(2.375,-4.4,-legdisp,0.35,0.3,0.5,neck);//right palm
 			cuboid(0,-5.2,0,2,0.5,0.8,capmain);//upper pant
-			//cuboid(-1,-7,0,0.9,1.4,0.8,capmain);//left leg
-			//cuboid(1,-7,0,0.9,1.4,0.8,capmain);//right leg
 			limbs(-1,-7,0,0.9,1.4,0.8,legdisp,capmain);//left leg
 			limbs(1,-7,0,0.9,1.4,0.8,-legdisp,capmain);//right leg
 			float shoes[9]={199,97,20,210,105,30,255,127,36};
-			cuboid(-1,-8.8,-0.3+legdisp,0.9,0.4,1.0,shoes);//left shoe	
-			cuboid(1,-8.8,-0.3-legdisp,0.9,0.4,1.0,shoes);//right shoe	
+			cuboid(-1,-8.8,-0.3-legdisp,0.9,0.4,1.0,shoes);//left shoe	
+			cuboid(1,-8.8,-0.3+legdisp,0.9,0.4,1.0,shoes);//right shoe	
 		}
 };
 
@@ -174,43 +175,43 @@ void hero(){
 }
  
 void limbs(float  cx,float cy, float cz ,float lx,float ly,float lz,float disp,float colors[]){
-  //FRONT
+//FRONT
   glBegin(GL_POLYGON);
   glColor3f(   (colors[0]/255.0),  (colors[1]/255.0), (colors[2]/255.0));
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
+  glVertex3f(  cx+lx, cy-ly, cz-lz-disp );
   glVertex3f(  cx+lx,  cy+ly, cz-lz );
   glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glVertex3f( cx-lx, cy-ly, cz-lz-disp );
   glEnd();
 
  
   //BACK
   glBegin(GL_POLYGON);
   glColor3f(   (colors[0]/255.0),  (colors[1]/255.0), (colors[2]/255.0));
-  glVertex3f(  cx+lx, cy-ly, cz+lz );
+  glVertex3f(  cx+lx, cy-ly, cz+lz-disp );
   glVertex3f(  cx+lx,  cy+ly, cz+lz );
   glVertex3f( cx-lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz+lz );
+  glVertex3f( cx-lx, cy-ly, cz+lz-disp );
   glEnd();
  
  
   //RIGHT
   glBegin(GL_POLYGON);
   glColor3f(   (colors[3]/255.0),  (colors[4]/255.0), (colors[5]/255.0));
-  glVertex3f( cx+lx, cy-ly, cz-lz );
+  glVertex3f( cx+lx, cy-ly, cz-lz-disp );
   glVertex3f( cx+lx,  cy+ly, cz-lz );
   glVertex3f( cx+lx,  cy+ly,  cz+lz );
-  glVertex3f( cx+lx, cy-ly,  cz+lz );
+  glVertex3f( cx+lx, cy-ly,  cz+lz-disp );
   glEnd();
  
  
   //LEFT
   glBegin(GL_POLYGON);
   glColor3f(   (colors[3]/255.0),  (colors[4]/255.0), (colors[5]/255.0));
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
+  glVertex3f( cx-lx, cy-ly,  cz+lz-disp );
   glVertex3f( cx-lx,  cy+ly,  cz+lz );
   glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glVertex3f( cx-lx, cy-ly, cz-lz-disp );
   glEnd();
  
   //TOP
@@ -225,9 +226,9 @@ void limbs(float  cx,float cy, float cz ,float lx,float ly,float lz,float disp,f
   //BOTTOM
   glBegin(GL_POLYGON);
   glColor3f(   (colors[6]/255.0),  (colors[7]/255.0), (colors[8]/255.0));
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glVertex3f(  cx+lx, cy-ly, cz-lz-disp );
+  glVertex3f(  cx+lx, cy-ly,  cz+lz-disp );
+  glVertex3f( cx-lx, cy-ly,  cz+lz -disp);
+  glVertex3f( cx-lx, cy-ly, cz-lz -disp);
   glEnd();
 }

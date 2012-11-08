@@ -341,58 +341,107 @@ int myFloor(double x){
 	}
 }
 
+float fracpart(float x){
+	return (x-floor(x));
+}
+
 bool collisionDetection(double xcor, double ycor,int dir){
+	float shiftX=fracpart(xcor+0.5),shiftY=fracpart(ycor+0.5);
+	if(!((shiftX <= 0.7 && shiftX >= 0.4) || (shiftY >=0.4 && shiftY <= 0.7))){
+		return false;
+
+	}
 	int i,j;
 	switch (dir){
 		case 0:
-			i=9+myFloor(xcor+0.5);
-			j=7-myFloor(0.5+ycor);
+			xcor-=0.1;
+			i=9+floor(xcor+0.5);
+			j=7-floor(0.5+ycor);
 			break;
 		case 1:
-			i=10+myFloor(0.5+xcor);
-			j=6-myFloor(0.5+ycor);
+			xcor+=0.1;
+			i=10+floor(0.5+xcor);
+			j=6-floor(0.5+ycor);
 			break;
 		case 2:
-			i=9+myFloor(0.5+xcor);
-			j=5-myFloor(0.5+ycor);
+			ycor+=0.1;
+			i=9+floor(0.5+xcor);
+			j=5-floor(0.5+ycor);
 			break;
 		case 3:
-			i=8+myFloor(0.5+xcor);
-			j=6-myFloor(0.5+ycor);
+			xcor-=0.1;
+			i=8+floor(0.5+xcor);
+			j=6-floor(0.5+ycor);
 			break;
 	}
+	cout<<"sorry "<<i<<" please "<<j<<" sorry "<<endl;
 	//cout<<" "<<i<<"   "<<xpos<<" "<<j<<endl;
 	//return ARENA.block(i,j).empty;
 	return true;
+}
+
+void movingLimbs(heros &hero){//a function for implementing the animation of walking of the players
+	if(hero.legdisp >= MAX_FOOT_DISTANCE && hero.rightLeg){
+		hero.rightLeg=false;
+	}
+	else if(hero.legdisp <= -(MAX_FOOT_DISTANCE) && !(hero.rightLeg)){
+		hero.rightLeg=true;
+	}
+	else{
+		if(hero.rightLeg){
+			hero.legdisp+=0.2;
+		}
+		else{
+			hero.legdisp-=0.2;
+		}
+	}
+
 }
 
 void keyboardKeys(unsigned char key, int x, int y){
 	switch (key){
 		case 'w':
 			if(neo.heroYpos < 5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,2))){
-				neo.heroYpos+=0.1;
+				neo.heroYpos+=neo.speed;
 			}
 			neo.heroDirection=2;
+			if(neo.heroDirection != neo.heroPrevDirection){
+				neo.legdisp=0;
+				neo.heroPrevDirection=neo.heroDirection;
+			}
 			break;
 		case 'a':
 			if(neo.heroXpos > -8 && (collisionDetection(neo.heroXpos,neo.heroYpos,3))){
-				neo.heroXpos-=0.1;
+				neo.heroXpos-=neo.speed;
 			}
 			neo.heroDirection=3;
+			if(neo.heroDirection != neo.heroPrevDirection){
+				neo.legdisp=0;
+				neo.heroPrevDirection=neo.heroDirection;
+			}
 			break;
 		case 's':
 			if(neo.heroYpos > -5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,0))){
-				neo.heroYpos-=0.1;
+				neo.heroYpos-=neo.speed;
 			}
 			neo.heroDirection=0;
+			if(neo.heroDirection != neo.heroPrevDirection){
+				neo.legdisp=0;
+				neo.heroPrevDirection=neo.heroDirection;
+			}
 		break;
 		case 'd':
 			if(neo.heroXpos < 8 && (collisionDetection(neo.heroXpos,neo.heroYpos,1))){
-				neo.heroXpos+=0.1;
+				neo.heroXpos+=neo.speed;
 			}
 			neo.heroDirection=1;
+			if(neo.heroDirection != neo.heroPrevDirection){
+				neo.legdisp=0;
+				neo.heroPrevDirection=neo.heroDirection;
+			}
 			break;
 	}
+	movingLimbs(neo);
 	switch (key){
 		case 'l':
 			neo.rotate_z+=5;
