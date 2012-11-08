@@ -346,6 +346,7 @@ float fracpart(float x){
 }
 
 bool collisionDetection(double xcor, double ycor,int dir){
+	return true;
 	float shiftX=fracpart(xcor+0.5),shiftY=fracpart(ycor+0.5);
 	if(!((shiftX <= 0.7 && shiftX >= 0.4) || (shiftY >=0.4 && shiftY <= 0.7))){
 		return false;
@@ -377,7 +378,6 @@ bool collisionDetection(double xcor, double ycor,int dir){
 	cout<<"sorry "<<i<<" please "<<j<<" sorry "<<endl;
 	//cout<<" "<<i<<"   "<<xpos<<" "<<j<<endl;
 	//return ARENA.block(i,j).empty;
-	return true;
 }
 
 void movingLimbs(heros &hero){//a function for implementing the animation of walking of the players
