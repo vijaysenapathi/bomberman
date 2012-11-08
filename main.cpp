@@ -9,11 +9,12 @@
 
 using namespace std;
 
-double rotate_z=0; 
+/*double rotate_z=0; 
 double rotate_x=0;
 double heroXpos=-8; 
 double heroYpos=5;
-int heroDirection=0;
+int heroDirection=0;*/
+heros neo;//the name of the player is neo
 
 void display();
 void specialKeys();
@@ -281,8 +282,8 @@ void display(){
   	glLoadIdentity();
 	gluLookAt(0,0,0,0,0,-5,0,1,0); 
 	glFrustum(-10,10,6,-6,-5,10);
-	glRotatef( rotate_x, 1.0, 0.0, 0.0 );
-	glRotatef( rotate_z, 0.0, 0.0, 1.0 );
+	glRotatef(neo.rotate_x, 1.0, 0.0, 0.0 );
+	glRotatef(neo.rotate_z, 0.0, 0.0, 1.0 );
 	glScalef(0.1,0.1,0.1);
 	for(int i=1;i<=hori;i++){
 		for(int j=1;j<verti;j++){
@@ -303,33 +304,28 @@ void display(){
 	borders(8.6,0,0.5,0.1,5.5,0.2);
 	borders(-8.6,0,0.5,0.1,5.5,0.2);
 	//glLoadIdentity();
-	glTranslatef(heroXpos,heroYpos,-1.34);
-	glRotatef(90*heroDirection,0,0,1);
-	hero();
+	glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
+	glRotatef(90*(neo.heroDirection),0,0,1);
+	neo.displayhero();
 	glFlush();
 	glutSwapBuffers(); 
 }
 
 
 void specialKeys( int key, int x, int y ) {
- 
-  //  Right arrow - increase rotation by 5 degree
-  
-	
-	
-	
+	//  Right arrow - increase rotation by 5 degree	
 	if (key == GLUT_KEY_RIGHT)
-    rotate_z += 5;
+		neo.rotate_z += 5;
  
   //  Left arrow - decrease rotation by 5 degree
   else if (key == GLUT_KEY_LEFT)
-    rotate_z -= 5;
+    neo.rotate_z -= 5;
  
   else if (key == GLUT_KEY_UP)
-    rotate_x += 5;
+    neo.rotate_x += 5;
  
   else if (key == GLUT_KEY_DOWN)
-    rotate_x -= 5;
+    neo.rotate_x -= 5;
  
   //  Request display update
   glutPostRedisplay();
@@ -366,48 +362,49 @@ bool collisionDetection(double xcor, double ycor,int dir){
 			break;
 	}
 	//cout<<" "<<i<<"   "<<xpos<<" "<<j<<endl;
-	return ARENA.block(i,j).empty;
+	//return ARENA.block(i,j).empty;
+	return true;
 }
 
 void keyboardKeys(unsigned char key, int x, int y){
 	switch (key){
 		case 'w':
-			if(heroYpos < 5.0 && (collisionDetection(heroXpos,heroYpos,2))){
-				heroYpos+=0.1;
+			if(neo.heroYpos < 5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,2))){
+				neo.heroYpos+=0.1;
 			}
-			heroDirection=2;
+			neo.heroDirection=2;
 			break;
 		case 'a':
-			if(heroXpos > -8 && (collisionDetection(heroXpos,heroYpos,3))){
-				heroXpos-=0.1;
+			if(neo.heroXpos > -8 && (collisionDetection(neo.heroXpos,neo.heroYpos,3))){
+				neo.heroXpos-=0.1;
 			}
-			heroDirection=3;
+			neo.heroDirection=3;
 			break;
 		case 's':
-			if(heroYpos > -5.0 && (collisionDetection(heroXpos,heroYpos,0))){
-				heroYpos-=0.1;
+			if(neo.heroYpos > -5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,0))){
+				neo.heroYpos-=0.1;
 			}
-			heroDirection=0;
+			neo.heroDirection=0;
 		break;
 		case 'd':
-			if(heroXpos < 8 && (collisionDetection(heroXpos,heroYpos,1))){
-				heroXpos+=0.1;
+			if(neo.heroXpos < 8 && (collisionDetection(neo.heroXpos,neo.heroYpos,1))){
+				neo.heroXpos+=0.1;
 			}
-			heroDirection=1;
+			neo.heroDirection=1;
 			break;
 	}
 	switch (key){
 		case 'l':
-			rotate_z+=5;
+			neo.rotate_z+=5;
 			break;
 		case 'j':
-			rotate_z-=5;
+			neo.rotate_z-=5;
 			break;
 		case 'i':
-			rotate_x+=5;
+			neo.rotate_x+=5;
 			break;
 		case 'k':
-			rotate_x-=5;
+			neo.rotate_x-=5;
 			break;
 	}
 	glutPostRedisplay();
@@ -431,7 +428,7 @@ int main(int argc, char* argv[]){
   // Callback functions
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboardKeys);
-  // glutSpecialFunc(specialKeys);
+  glutSpecialFunc(specialKeys);
  
   //  Pass control to GLUT for events
   glutMainLoop();
