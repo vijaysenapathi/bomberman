@@ -345,39 +345,18 @@ float fracpart(float x){
 	return (x-floor(x));
 }
 
-bool collisionDetection(double xcor, double ycor,int dir){
-	return true;
-	float shiftX=fracpart(xcor+0.5),shiftY=fracpart(ycor+0.5);
-	if(!((shiftX <= 0.7 && shiftX >= 0.4) || (shiftY >=0.4 && shiftY <= 0.7))){
-		return false;
-
-	}
-	int i,j;
-	switch (dir){
-		case 0:
-			xcor-=0.1;
-			i=9+floor(xcor+0.5);
-			j=7-floor(0.5+ycor);
-			break;
-		case 1:
-			xcor+=0.1;
-			i=10+floor(0.5+xcor);
-			j=6-floor(0.5+ycor);
-			break;
-		case 2:
-			ycor+=0.1;
-			i=9+floor(0.5+xcor);
-			j=5-floor(0.5+ycor);
-			break;
-		case 3:
-			xcor-=0.1;
-			i=8+floor(0.5+xcor);
-			j=6-floor(0.5+ycor);
-			break;
-	}
-	cout<<"sorry "<<i<<" please "<<j<<" sorry "<<endl;
-	//cout<<" "<<i<<"   "<<xpos<<" "<<j<<endl;
-	//return ARENA.block(i,j).empty;
+bool collisionDetection(double xcor, double ycor){
+	float xr=xcor+0.29,xl=xcor-0.29;
+	float yu=ycor+0.29,yd=ycor-0.29;
+	int i0,i1,i2,i3,j0,j1,j2,j3;
+	i0=9+floor(xcor+0.5);j0=6-floor(yd+0.5);
+	i1=9+floor(xr+0.5);j1=6-floor(ycor+0.5);
+	i2=9+floor(xcor+0.5);j2=6-floor(yu+0.5);
+	i3=9+floor(xl+0.5);j3=6-floor(ycor+0.5);
+	return (ARENA.block(i0,j0).empty 
+			&& ARENA.block(i1,j1).empty 
+			&& ARENA.block(i2,j2).empty 
+			&& ARENA.block(i3,j3).empty);
 }
 
 void movingLimbs(heros &hero){//a function for implementing the animation of walking of the players
@@ -399,9 +378,13 @@ void movingLimbs(heros &hero){//a function for implementing the animation of wal
 }
 
 void keyboardKeys(unsigned char key, int x, int y){
+	float dummyX,dummyY;
 	switch (key){
 		case 'w':
-			if(neo.heroYpos < 5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,2))){
+			dummyX=neo.heroXpos;
+			dummyY=neo.heroYpos;
+			dummyY+=neo.speed;
+			if(neo.heroYpos < 5.0 && (collisionDetection(dummyX,dummyY))){
 				neo.heroYpos+=neo.speed;
 			}
 			neo.heroDirection=2;
@@ -411,7 +394,10 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			break;
 		case 'a':
-			if(neo.heroXpos > -8 && (collisionDetection(neo.heroXpos,neo.heroYpos,3))){
+			dummyX=neo.heroXpos;
+			dummyY=neo.heroYpos;
+			dummyX-=neo.speed;
+			if(neo.heroXpos > -8 && (collisionDetection(dummyX,dummyY))){
 				neo.heroXpos-=neo.speed;
 			}
 			neo.heroDirection=3;
@@ -421,7 +407,10 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			break;
 		case 's':
-			if(neo.heroYpos > -5.0 && (collisionDetection(neo.heroXpos,neo.heroYpos,0))){
+			dummyX=neo.heroXpos;
+			dummyY=neo.heroYpos;
+			dummyY-=neo.speed;
+			if(neo.heroYpos > -5.0 && (collisionDetection(dummyX,dummyY))){
 				neo.heroYpos-=neo.speed;
 			}
 			neo.heroDirection=0;
@@ -431,7 +420,10 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 		break;
 		case 'd':
-			if(neo.heroXpos < 8 && (collisionDetection(neo.heroXpos,neo.heroYpos,1))){
+			dummyX=neo.heroXpos;
+			dummyY=neo.heroYpos;
+			dummyX+=neo.speed;
+			if(neo.heroXpos < 8 && (collisionDetection(dummyX,dummyY))){
 				neo.heroXpos+=neo.speed;
 			}
 			neo.heroDirection=1;
