@@ -53,58 +53,52 @@ void grid::readTheLevel(string filename){
 		3 for increase player speed
 		4 for player bombs number
 		5 invincibility to a bomb*/
-	cout<<"print hit"<<endl;
-	fstream levelinput("leveltest", fstream::in);
+	fstream levelinput(&filename[0], fstream::in);
 	int i,j,temp;
 	for(i=1;i<=11;i++){
 		for(j=1;j<=17;j++){
+			levelinput>>temp;
 			if(i % 2 == 0 && j % 2 == 0){
 				block(j,i).powerup=0;
 				block(j,i).destructible=false;
 				block(j,i).empty=false;
 				continue;
 			}
-			levelinput>>temp;
-			cout<<"temp is "<<i<<" "<< j<<" "<<temp<<endl;
 			switch(temp){
 				case 0:
-					block(j,i).powerup=0;
-					block(j,i).destructible=false;
-					block(j,i).empty=true;
-					continue;
-					//cout<<"hello"<<" "<<i<<" "<<j<<endl;
+					arena[j-1][i-1].powerup=0;
+					arena[j-1][i-1].destructible=false;
+					arena[j-1][i-1].empty=true;
+					continue;				
 					break;
 				case 1:
-					cout<<"yes thiis me"<<endl;
-					block(j,i).setempty(false);
-					block(j,i).setdestructible(true);
-					block(j,i).setpowerup(0);
+					arena[j-1][i-1].empty=false;
+					arena[j-1][i-1].destructible=true;
+					arena[j-1][i-1].powerup=0;
 					break;
 				case 2:
-					block(j,i).empty=false;
-					block(j,i).destructible=true;
-					block(j,i).powerup=2;
+					arena[j-1][i-1].empty=false;
+					arena[j-1][i-1].destructible=true;
+					arena[j-1][i-1].powerup=2;
 					break;
 				case 3:
-					block(j,i).empty=false;
-					block(j,i).destructible=true;
-					block(j,i).powerup=3;
+					arena[j-1][i-1].empty=false;
+					arena[j-1][i-1].destructible=true;
+					arena[j-1][i-1].powerup=3;
 					break;
 				case 4:
-					block(j,i).empty=false;
-					block(j,i).destructible=true;
-					block(j,i).powerup=4;
+					arena[j-1][i-1].empty=false;
+					arena[j-1][i-1].destructible=true;
+					arena[j-1][i-1].powerup=4;
 					break;
 				case 5:
-					block(j,i).empty=false;
-					block(j,i).destructible=true;
-					block(j,i).powerup=5;
+					arena[j-1][i-1].empty=false;
+					arena[j-1][i-1].destructible=true;
+					arena[j-1][i-1].powerup=5;
 					break;
 			}
-			levelinput.close();
 		}
 	}
-
-
+	levelinput.close();
 }
 #endif

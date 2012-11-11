@@ -286,7 +286,7 @@ void display(){
 	glRotatef(neo.rotate_z, 0.0, 0.0, 1.0 );
 	glScalef(0.1,0.1,0.1);
 	for(int i=1;i<=hori;i++){
-		for(int j=1;j<verti;j++){
+		for(int j=1;j<=verti;j++){
 			if(ARENA.block(i,j).empty){
 			}
 			else{
@@ -457,7 +457,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 
 int main(int argc, char* argv[]){
 
-  ARENA.readTheLevel("leveltest");	
+  ARENA.readTheLevel("leveltest");	 
   //  Initialize GLUT and process user parameters
   glutInit(&argc,argv);
  
