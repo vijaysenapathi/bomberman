@@ -23,5 +23,13 @@ class square{
 			powerup=0;
 			destructible=false;
 			empty=true;*/
-		
+		void setempty(bool val){
+			empty=val;
+		}		
+		void setdestructible(bool val){
+			destructible=val;
+		}
+		void setpowerup(int i){
+			powerup=i;
+		}
 };

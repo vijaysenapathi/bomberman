@@ -456,7 +456,8 @@ void keyboardKeys(unsigned char key, int x, int y){
 }
 
 int main(int argc, char* argv[]){
- 
+
+  ARENA.readTheLevel("leveltest");	
   //  Initialize GLUT and process user parameters
   glutInit(&argc,argv);
  

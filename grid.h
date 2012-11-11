@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "square.h"
+#include <fstream>
 using namespace std;
 #define HORIZONTAL_LENGTH_ARENA 17
 #define VERTICAL_LENGTH_ARENA 11
@@ -14,6 +15,7 @@ class grid{
 		grid();
 		square block(int a,int b);//access the block at i,j
 		void makedestructible(int a,int b,int powerUp);
+		void readTheLevel(string filename);
 };
 
 
@@ -32,8 +34,8 @@ grid::grid(){
 			}
 		}
 	}
-	makedestructible(2,1,0);
-	makedestructible(5,2,0);
+	//makedestructible(2,1,0);
+	//makedestructible(5,2,0);
 }
 void grid::makedestructible(int a,int b,int powerUp){
 	arena[a-1][b-1].powerup=powerUp;
@@ -42,5 +44,67 @@ void grid::makedestructible(int a,int b,int powerUp){
 }
 square grid::block(int a,int b){
 	return arena[a-1][b-1];
+}
+void grid::readTheLevel(string filename){
+	      /*0 for nothing
+		1 for just a destructible
+		powerup
+		2 for exit
+		3 for increase player speed
+		4 for player bombs number
+		5 invincibility to a bomb*/
+	cout<<"print hit"<<endl;
+	fstream levelinput("leveltest", fstream::in);
+	int i,j,temp;
+	for(i=1;i<=11;i++){
+		for(j=1;j<=17;j++){
+			if(i % 2 == 0 && j % 2 == 0){
+				block(j,i).powerup=0;
+				block(j,i).destructible=false;
+				block(j,i).empty=false;
+				continue;
+			}
+			levelinput>>temp;
+			cout<<"temp is "<<i<<" "<< j<<" "<<temp<<endl;
+			switch(temp){
+				case 0:
+					block(j,i).powerup=0;
+					block(j,i).destructible=false;
+					block(j,i).empty=true;
+					continue;
+					//cout<<"hello"<<" "<<i<<" "<<j<<endl;
+					break;
+				case 1:
+					cout<<"yes thiis me"<<endl;
+					block(j,i).setempty(false);
+					block(j,i).setdestructible(true);
+					block(j,i).setpowerup(0);
+					break;
+				case 2:
+					block(j,i).empty=false;
+					block(j,i).destructible=true;
+					block(j,i).powerup=2;
+					break;
+				case 3:
+					block(j,i).empty=false;
+					block(j,i).destructible=true;
+					block(j,i).powerup=3;
+					break;
+				case 4:
+					block(j,i).empty=false;
+					block(j,i).destructible=true;
+					block(j,i).powerup=4;
+					break;
+				case 5:
+					block(j,i).empty=false;
+					block(j,i).destructible=true;
+					block(j,i).powerup=5;
+					break;
+			}
+			levelinput.close();
+		}
+	}
+
+
 }
 #endif
