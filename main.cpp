@@ -392,6 +392,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 				neo.legdisp=0;
 				neo.heroPrevDirection=neo.heroDirection;
 			}
+			movingLimbs(neo);
 			break;
 		case 'a':
 			dummyX=neo.heroXpos;
@@ -405,6 +406,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 				neo.legdisp=0;
 				neo.heroPrevDirection=neo.heroDirection;
 			}
+			movingLimbs(neo);
 			break;
 		case 's':
 			dummyX=neo.heroXpos;
@@ -418,7 +420,8 @@ void keyboardKeys(unsigned char key, int x, int y){
 				neo.legdisp=0;
 				neo.heroPrevDirection=neo.heroDirection;
 			}
-		break;
+			movingLimbs(neo);
+			break;
 		case 'd':
 			dummyX=neo.heroXpos;
 			dummyY=neo.heroYpos;
@@ -431,9 +434,10 @@ void keyboardKeys(unsigned char key, int x, int y){
 				neo.legdisp=0;
 				neo.heroPrevDirection=neo.heroDirection;
 			}
+			movingLimbs(neo);
 			break;
 	}
-	movingLimbs(neo);
+
 	switch (key){
 		case 'l':
 			neo.rotate_z+=5;
