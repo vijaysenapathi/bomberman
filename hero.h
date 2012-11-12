@@ -1,3 +1,6 @@
+#ifndef HERO_H
+#define HERO_H
+
 #include<iostream>
 #include<GL/glu.h>
 #include<GL/freeglut.h>
@@ -236,3 +239,5 @@ void limbs(float  cx,float cy, float cz ,float lx,float ly,float lz,float disp,f
   glVertex3f( cx-lx, cy-ly, cz-lz -disp);
   glEnd();
 }
+
+#endif

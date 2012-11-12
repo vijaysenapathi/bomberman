@@ -10,6 +10,7 @@
 #include "grid.h"
 #include "hero.h"
 #include "bomb.h"
+#include "powerups.h"
 #include "timer.h"
 
 using namespace std;
@@ -292,8 +293,18 @@ void display(){
 				if(ARENA.block(i,j).destructible){
 					destructibles(i-9,6-j,0,0.45,0.45,0.45);
 				}
-				else
+				else if((i%2 == 0) && (j%2 == 0)){
 					undestructibles(i-9,6-j,0);
+				}
+				else if(ARENA.block(i,j).powerup != 0){
+					switch(ARENA.block(i,j).powerup){
+						default:
+							glPushMatrix();
+							glTranslatef(i-9,6-j,0);
+							displaypowerup();
+							glPopMatrix();
+					}
+				}
 			}
 			if(ARENA.block(i,j).bomb){
 				glPushMatrix();
