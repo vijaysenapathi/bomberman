@@ -26,6 +26,8 @@ class heros{
 		bool rightLeg;//true if the right leg should move forward
 		float legdisp;//displacement of the leg from the resting position
 		float speed;
+		bool bombPlaced;
+		bool infiBombs;
 		heros(){
 			rotate_z=0;
 			rotate_x=0;
@@ -35,6 +37,8 @@ class heros{
 			heroPrevDirection=0;
 			legdisp=0;
 			speed=0.1;
+			bombPlaced=false;
+			infiBombs=false;
 		}
 		void displayhero(){
 		 	//glTranslatef(0,5,0);

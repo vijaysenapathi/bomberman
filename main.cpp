@@ -385,6 +385,7 @@ void movingLimbs(heros &hero){//a function for implementing the animation of wal
 }
 
 void dropABomb(){
+	neo.bombPlaced=true; 
 	if(gettimeofday(&later,NULL)){
 		perror("drop A Bomb error");
 		exit(1);
@@ -479,7 +480,9 @@ void keyboardKeys(unsigned char key, int x, int y){
 			movingLimbs(neo);
 			break;
 		case ' ':
-			dropABomb();
+			if((!neo.bombPlaced) || (neo.infiBombs)){
+				dropABomb();
+			}
 	}
 
 	switch (key){
@@ -500,6 +503,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 }
 
 void blastBomb(){
+	neo.bombPlaced=false;
 	int i,j;
 	i=bombQueue.top().Xpos;
 	j=bombQueue.top().Ypos;
@@ -532,11 +536,11 @@ void timer(int i){
 						tempbomb.timeToBlast-=time;
 						bombQueue.push(tempbomb);
 					}
+					if(gettimeofday(&earlier,NULL)){
+						perror("second time in timer");
+					exit(1);
+					}
 					glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
-				}
-				if(gettimeofday(&earlier,NULL)){
-					perror("second time in timer");
-				exit(1);
 				}
 			}
 	}	
