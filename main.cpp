@@ -292,9 +292,8 @@ void display(){
 			}
 			if(ARENA.block(i,j).bomb){
 				glPushMatrix();
-				//glLoadIdentity();
-				glScalef(100,100,100);
-				glTranslatef(0,0,0);
+				glTranslatef(i-9,6-j,0);
+				glScalef(1.5,1.5,1.5);
 				displaybomb();
 				glPopMatrix();
 			}

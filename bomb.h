@@ -157,7 +157,6 @@ void wire(float cx,float cy, float cz ,float lx,float ly,float lz){
 void displaybomb(){
 	//glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   	//glLoadIdentity();
-	glScalef(1,1,1);
 	chemical(0,0,0,0.25,0.25,0.25);
 	/*wire(0.15,0,0.26,0.025,0.25,0.01);
 	wire(-0.15,0,0.26,0.025,0.25,0.01);
