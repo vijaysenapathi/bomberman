@@ -55,6 +55,21 @@ void grid::setbomb(int i,int j){
 }
 void grid::removebomb(int i,int j){
 	arena[i-1][j-1].bomb=false;
+	int A[]={i-1,j,i,j-1,i+1,j,i,j+1},k=0;
+	while(k <= 7){
+		int I=A[k],J=A[k+1];
+		if(I >= 1 && I <= 17 && J >= 1 && J <= 11){
+			if(arena[I-1][J-1].destructible){
+				arena[I-1][J-1].destructible=false;
+				if(arena[I-1][J-1].powerup == 0){
+					arena[I-1][J-1].empty=true;
+				}
+			}
+		}
+		k+=2;
+	}
+
+
 }
 void grid::readTheLevel(string filename){
 	      /*0 for nothing
