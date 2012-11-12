@@ -16,6 +16,8 @@ class grid{
 		square block(int a,int b);//access the block at i,j
 		void makedestructible(int a,int b,int powerUp);
 		void readTheLevel(string filename);
+		void setbomb(int i,int j);
+		void removebomb(int i,int j);
 };
 
 
@@ -37,6 +39,9 @@ grid::grid(){
 	//makedestructible(2,1,0);
 	//makedestructible(5,2,0);
 }
+
+
+
 void grid::makedestructible(int a,int b,int powerUp){
 	arena[a-1][b-1].powerup=powerUp;
 	arena[a-1][b-1].destructible=true;
@@ -44,6 +49,9 @@ void grid::makedestructible(int a,int b,int powerUp){
 }
 square grid::block(int a,int b){
 	return arena[a-1][b-1];
+}
+void grid::setbomb(int i,int j){
+	arena[i-1][j-1].bomb=true;
 }
 void grid::readTheLevel(string filename){
 	      /*0 for nothing

@@ -14,6 +14,7 @@ class square{
 
 		bool destructible;
 		bool empty;
+		bool bomb;
 		/*square(int Powerup,bool Destructible,bool Empty){//a generalized constructor
 			powerup=Powerup;
 			destructible=Destructible;
@@ -23,6 +24,9 @@ class square{
 			powerup=0;
 			destructible=false;
 			empty=true;*/
+		square(){
+			bomb=false;
+		}
 		void setempty(bool val){
 			empty=val;
 		}		

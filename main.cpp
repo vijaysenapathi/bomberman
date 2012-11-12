@@ -4,16 +4,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <math.h>
+#include <queue>
+#include <ctime>
 #include "grid.h"
 #include "hero.h"
+#include "bomb.h"
 
 using namespace std;
 
-/*double rotate_z=0; 
-double rotate_x=0;
-double heroXpos=-8; 
-double heroYpos=5;
-int heroDirection=0;*/
 heros neo;//the name of the player is neo
 
 void display();
@@ -22,16 +20,12 @@ void specialKeys();
 grid ARENA;
 int hori=17,verti=11;
 
-void undestructibles(float cx,float cy, float cz ){
+priority_queue<bombs> bombQueue;
 
-  /*glBegin(GL_POLYGON);
- 
-  glColor3f( 1.0, 0.0, 0.0 );     glVertex3f(  cx+0.5, cy-0.5, cz-0.5 );      // P1 is red
-  glColor3f( 0.0, 1.0, 0.0 );     glVertex3f(  cx+0.5, cy+ 0.5, cz-0.5 );      // P2 is green
-  glColor3f( 0.0, 0.0, 1.0 );     glVertex3f( cx-0.5,  cy+0.5, cz-0.5 );      // P3 is blue
-  glColor3f( 1.0, 0.0, 1.0 );     glVertex3f( cx-0.5, cy-0.5, cz-0.5 );      // P4 is purple
- 
-  glEnd();*/
+
+void timer(int i);
+
+void undestructibles(float cx,float cy, float cz ){
 
   //Yellow size-FRONT
   glBegin(GL_POLYGON);
@@ -296,6 +290,14 @@ void display(){
 				else
 					undestructibles(i-9,6-j,0);
 			}
+			if(ARENA.block(i,j).bomb){
+				glPushMatrix();
+				//glLoadIdentity();
+				glScalef(100,100,100);
+				glTranslatef(0,0,0);
+				displaybomb();
+				glPopMatrix();
+			}
 		}
 	}
 	base(0,0,0.7,8.5,5.5,0.2);
@@ -303,10 +305,14 @@ void display(){
 	borders(0,-5.6,0.5,8.5,0.1,0.2);
 	borders(8.6,0,0.5,0.1,5.5,0.2);
 	borders(-8.6,0,0.5,0.1,5.5,0.2);
-	//glLoadIdentity();
+	glPushMatrix();
 	glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
 	glRotatef(90*(neo.heroDirection),0,0,1);
 	neo.displayhero();
+	glPopMatrix();
+	if(!bombQueue.empty()){
+		
+	}
 	glFlush();
 	glutSwapBuffers(); 
 }
@@ -377,6 +383,18 @@ void movingLimbs(heros &hero){//a function for implementing the animation of wal
 
 }
 
+void dropABomb(){
+	float x=neo.heroXpos,y=neo.heroYpos;
+	int i,j;
+	i=9+floor(x+0.5);
+	j=6-floor(y+0.5);
+	bombs aBomb(i,j,4);
+	bombQueue.push(aBomb);
+	ARENA.setbomb(i,j);
+	glutPostRedisplay();
+	glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
+}
+
 void keyboardKeys(unsigned char key, int x, int y){
 	float dummyX,dummyY;
 	switch (key){
@@ -436,6 +454,8 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			movingLimbs(neo);
 			break;
+		case ' ':
+			dropABomb();
 	}
 
 	switch (key){
@@ -454,6 +474,15 @@ void keyboardKeys(unsigned char key, int x, int y){
 	}
 	glutPostRedisplay();
 }
+
+void blastBomb(){
+
+}
+
+void timer(int i){
+	
+}
+
 
 int main(int argc, char* argv[]){
 
@@ -475,6 +504,7 @@ int main(int argc, char* argv[]){
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboardKeys);
   glutSpecialFunc(specialKeys);
+  glutTimerFunc(0,timer,1);
  
   //  Pass control to GLUT for events
   glutMainLoop();
