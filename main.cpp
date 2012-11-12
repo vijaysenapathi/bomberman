@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <math.h>
 #include <queue>
+#include <list>
 #include <ctime>
 #include "grid.h"
 #include "hero.h"
@@ -21,7 +22,6 @@ grid ARENA;
 int hori=17,verti=11;
 
 priority_queue<bombs> bombQueue;
-
 
 void timer(int i);
 
@@ -308,10 +308,7 @@ void display(){
 	glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
 	glRotatef(90*(neo.heroDirection),0,0,1);
 	neo.displayhero();
-	glPopMatrix();
-	if(!bombQueue.empty()){
-		
-	}
+	glPopMatrix();	
 	glFlush();
 	glutSwapBuffers(); 
 }
@@ -387,7 +384,7 @@ void dropABomb(){
 	int i,j;
 	i=9+floor(x+0.5);
 	j=6-floor(y+0.5);
-	bombs aBomb(i,j,4);
+	bombs aBomb(i,j,4000);
 	bombQueue.push(aBomb);
 	ARENA.setbomb(i,j);
 	glutPostRedisplay();
@@ -475,11 +472,36 @@ void keyboardKeys(unsigned char key, int x, int y){
 }
 
 void blastBomb(){
-
+	int i,j;
+	i=bombQueue.top().Xpos;
+	j=bombQueue.top().Ypos;
+	ARENA.removebomb(i,j);
+	bombQueue.pop();
+	glutPostRedisplay();
 }
 
 void timer(int i){
-	
+	switch(i){
+		case 1://bombs explosion
+			float time;
+			time=bombQueue.top().timeToBlast;
+			blastBomb();
+			if(!bombQueue.empty()){
+				list<bombs> bombslist;
+				for(;!bombQueue.empty();){
+					bombslist.push_back(bombQueue.top());
+					bombQueue.pop();
+				}
+				bombs tempbomb;
+				list<bombs>::iterator it;
+				for(it=bombslist.begin();it!=bombslist.end();it++){
+					tempbomb=*it;
+					tempbomb.timeToBlast-=time;
+					bombQueue.push(tempbomb);
+				}
+				glutTimerFunc(bombQueue.top().timeToBlast-time,timer,1);
+			}cout<<"occured"<<endl;
+	}	
 }
 
 
@@ -503,7 +525,7 @@ int main(int argc, char* argv[]){
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboardKeys);
   glutSpecialFunc(specialKeys);
-  glutTimerFunc(0,timer,1);
+  //glutTimerFunc(0,timer,1);
  
   //  Pass control to GLUT for events
   glutMainLoop();

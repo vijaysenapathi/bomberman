@@ -18,6 +18,9 @@ class bombs{
 	public:
 		float timeToBlast;
 		int Xpos,Ypos;
+		bombs(){
+
+		}
 		bombs(int i,int j,float time){
 			Xpos=i;
 			Ypos=j;

@@ -53,6 +53,9 @@ square grid::block(int a,int b){
 void grid::setbomb(int i,int j){
 	arena[i-1][j-1].bomb=true;
 }
+void grid::removebomb(int i,int j){
+	arena[i-1][j-1].bomb=false;
+}
 void grid::readTheLevel(string filename){
 	      /*0 for nothing
 		1 for just a destructible
