@@ -1,6 +1,7 @@
+#ifndef SQUARE_H
+#define SQUARE_H
 #include<iostream>
 using namespace std;
-
 
 //The square class
 class square{
@@ -37,3 +38,4 @@ class square{
 			powerup=i;
 		}
 };
+#endif

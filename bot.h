@@ -1,7 +1,7 @@
 #ifndef BOT_H
 #define BOT_H
 #include <iostream>
-#include <cstlib>
+#include <cstdlib>
 #include <list>
 #include "square.h"
 using namespace std;
@@ -17,10 +17,10 @@ class bots{
 			ifrom=x;
 			jfrom=y;
 		}
-		int directionToMove(int level,float heroXpos,float heroYpos,square arena[][]){
+		int directionToMove(int level,float heroXpos,float heroYpos,square arena[17][11]){
+			int i;
 			switch(level){
 				case 0:
-					int i;
 					while(true){
 						i=rand()%5;
 						if(i == 0){
@@ -41,7 +41,7 @@ class bots{
 							if(arena[ifrom-1][jfrom-2].empty){
 								ito=ifrom;
 								jto=jfrom-1;
-								break
+								break;
 							}
 						}
 						else if(i == 3){
@@ -60,7 +60,7 @@ class bots{
 			}
 			return i;
 		}
-}
+};
 
 
 #endif
