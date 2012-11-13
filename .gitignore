@@ -1,4 +1,2 @@
-*     #no files
-!*.cpp #add .cpp files
-!*.h	#add .h files
-!*.txt #add .txt files
+.*
+bomberman
