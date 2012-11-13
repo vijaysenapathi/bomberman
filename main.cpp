@@ -322,14 +322,12 @@ void display(){
 	}
 	list<bots>::iterator itr;
 	for(itr=botsList.begin();itr!=botsList.end();itr++){
-		if(itr->ifrom == itr->ito && itr->jfrom==itr->jto){
-			glPushMatrix();
-			glTranslatef(itr->Xpos,itr->Ypos,0);
-			glRotatef(90*(itr->direction),0,0,1);
-			glRotatef(-90,1,0,0);
-			displaybot();
-			glPopMatrix();
-		}
+		glPushMatrix();
+		glTranslatef(itr->Xpos,itr->Ypos,0);
+		glRotatef(90*(itr->direction),0,0,1);
+		glRotatef(-90,1,0,0);
+		displaybot();
+		glPopMatrix();
 	}
 	base(0,0,0.7,8.5,5.5,0.2);
 	borders(0,5.6,0.5,8.5,0.1,0.2);
@@ -585,8 +583,8 @@ void timer(int i){
 				}
 			}
 			botSteps=(botSteps+1)%11;
-			glutTimerFunc(30,timer,2);
 			glutPostRedisplay();
+			glutTimerFunc(30,timer,2);
 			break;
 
 	}	
@@ -595,9 +593,9 @@ void timer(int i){
 void addbots(){
 	bots testbot1(8,1),testbot2(15,11);
 	botsList.push_back(testbot1);
-	//botsList.push_back(testbot2);
-	glutTimerFunc(30,timer,2);
+	botsList.push_back(testbot2);
 	glutPostRedisplay();
+	glutTimerFunc(30,timer,2);
 }
 
 int main(int argc, char* argv[]){
