@@ -12,7 +12,7 @@ using namespace std;
 class bots{
 	public:
 		int ID;
-		int ifrom,jfrom,ito,jto;
+		int ifrom,jfrom,ito,jto;//i's have values from 1 till 17 and j's from 1 till 11
 		float Xpos,Ypos;
 		int direction;
 		bots(int x, int y){
@@ -24,7 +24,7 @@ class bots{
 			Ypos=6-y;
 			direction=rand()%4;
 		}
-		int directionToMove(int level,float heroXpos,float heroYpos,square arena[17][11]){
+		void directionToMove(int level,float heroXpos,float heroYpos,square arena[17][11]){
 			ifrom=ito;jfrom=jto;
 			int i;
 			switch(level){
@@ -32,28 +32,40 @@ class bots{
 					while(true){
 						i=int(rand()%5);
 						if(i == 0){
-							if(arena[ifrom-1][jfrom].empty){
+							if(!((jfrom+1) <= 11)){
+								continue;
+							}
+							else if(arena[ifrom-1][jfrom].empty){
 								ito=ifrom;
 								jto=jfrom+1;
 								break;
 							}
 						}
 						else if(i == 1){
-							if(arena[ifrom][jfrom-1].empty){
+							if(!((ifrom+1) <= 17)){
+								continue;
+							}
+							else if(arena[ifrom][jfrom-1].empty){
 								ito=ifrom+1;
 								jto=jfrom;
 								break;
 							}
 						}
 						else if(i == 2){
-							if(arena[ifrom-1][jfrom-2].empty){
+							if(!((jfrom-1) >= 1)){
+								continue;
+							}
+							else if(arena[ifrom-1][jfrom-2].empty){
 								ito=ifrom;
 								jto=jfrom-1;
 								break;
 							}
 						}
 						else if(i == 3){
-							if(arena[ifrom-2][jfrom-1].empty){
+							if(!((ifrom-1) >= 1)){
+								continue;
+							}
+							else if(arena[ifrom-2][jfrom-1].empty){
 								ito=ifrom-1;
 								jto=jfrom;
 								break;
@@ -69,7 +81,6 @@ class bots{
 			if(i != 4){
 				direction=i;
 			}
-			return i;
 		}
 
 };

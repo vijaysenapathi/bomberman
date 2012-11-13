@@ -32,7 +32,7 @@ void timer(int i);
 
 timeval earlier,later,interval;
 
-double prevTime=0,botTime=0.2;
+double prevTime=0;
 
 int botSteps=0;
 
@@ -573,7 +573,7 @@ void timer(int i){
 			break;
 		case 2://bots case
 			list<bots>::iterator itr;
-			if(true || botSteps == 0){
+			if(botSteps == 0){
 				for(itr=botsList.begin();itr != botsList.end();itr++){
 					itr->directionToMove(0,neo.heroXpos,neo.heroYpos,ARENA.arena);
 				}
@@ -584,8 +584,8 @@ void timer(int i){
 					itr->Ypos=(itr->Ypos)+(((itr->jfrom)-(itr->jto))/10.0);
 				}
 			}
-			botSteps=(botSteps+1)%10;
-			glutTimerFunc(300,timer,2);
+			botSteps=(botSteps+1)%11;
+			glutTimerFunc(30,timer,2);
 			glutPostRedisplay();
 			break;
 
@@ -595,8 +595,8 @@ void timer(int i){
 void addbots(){
 	bots testbot1(8,1),testbot2(15,11);
 	botsList.push_back(testbot1);
-	botsList.push_back(testbot2);
-	glutTimerFunc(300,timer,2);
+	//botsList.push_back(testbot2);
+	glutTimerFunc(30,timer,2);
 	glutPostRedisplay();
 }
 
