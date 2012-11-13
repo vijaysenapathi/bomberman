@@ -488,40 +488,41 @@ void keyboardKeys(unsigned char key, int x, int y){
 int bombsID=3;
 
 void dropABomb(){
-	neo.bombPlaced=true; 
-	if(gettimeofday(&later,NULL)){
-		perror("drop A Bomb error");
-		exit(1);
-	}
-	double time=(timeval_diff(NULL,&later,&earlier)/1000000.0);
-	if(!bombQueue.empty()){
-		list<bombs> bombslist;
-		for(;!bombQueue.empty();){
-			bombslist.push_back(bombQueue.top());
-			bombQueue.pop();
-		}
-		bombs tempbomb;
-		list<bombs>::iterator it;
-		for(it=bombslist.begin();it!=bombslist.end();it++){
-			tempbomb=*it;
-			tempbomb.timeToBlast-=time;
-			bombQueue.push(tempbomb);
-		}
-	}
-	if(gettimeofday(&earlier,NULL)){
-		perror("second time in drobABomb()");
-		exit(1);
-	}
 	float x=neo.heroXpos,y=neo.heroYpos;
+	neo.bombPlaced=true; 
 	int i,j;
 	i=9+floor(x+0.5);
 	j=6-floor(y+0.5);
-	bombs aBomb(i,j,4000);
-	bombQueue.push(aBomb);
-	ARENA.setbomb(i,j);
-	glutPostRedisplay();
-	//glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
-	glutTimerFunc(2000,timer,bombsID++);	
+	if(!ARENA.block(i,j).bomb){
+		if(gettimeofday(&later,NULL)){
+			perror("drop A Bomb error");
+			exit(1);
+		}
+		double time=(timeval_diff(NULL,&later,&earlier)/1000000.0);
+		if(!bombQueue.empty()){
+			list<bombs> bombslist;
+			for(;!bombQueue.empty();){
+				bombslist.push_back(bombQueue.top());
+				bombQueue.pop();
+			}
+			bombs tempbomb;
+			list<bombs>::iterator it;
+			for(it=bombslist.begin();it!=bombslist.end();it++){
+				tempbomb=*it;
+				tempbomb.timeToBlast-=time;
+				bombQueue.push(tempbomb);
+			}
+		}
+		if(gettimeofday(&earlier,NULL)){
+			perror("second time in drobABomb()");
+			exit(1);
+		}
+		bombs aBomb(i,j,4000);
+		bombQueue.push(aBomb);
+		ARENA.setbomb(i,j);
+		glutPostRedisplay();
+		glutTimerFunc(2000,timer,bombsID++);	
+	}
 }
 
 void blastBomb(){
