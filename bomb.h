@@ -14,10 +14,13 @@
 double rotate_y=0; 
 double rotate_x=0;
 
+int bombID=3;
+
 class bombs{
 	public:
 		float timeToBlast;
 		int Xpos,Ypos;
+		int ID;
 		bombs(){
 
 		}
@@ -25,6 +28,7 @@ class bombs{
 			Xpos=i;
 			Ypos=j;
 			timeToBlast=time;
+			ID=bombID++;
 		}
 };
 

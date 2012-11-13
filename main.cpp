@@ -485,6 +485,8 @@ void keyboardKeys(unsigned char key, int x, int y){
 	glutPostRedisplay();
 }
 
+int bombsID=3;
+
 void dropABomb(){
 	neo.bombPlaced=true; 
 	if(gettimeofday(&later,NULL)){
@@ -519,7 +521,7 @@ void dropABomb(){
 	ARENA.setbomb(i,j);
 	glutPostRedisplay();
 	//glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
-	glutTimerFunc(2000,timer,1);	
+	glutTimerFunc(2000,timer,bombsID++);	
 }
 
 void blastBomb(){
@@ -533,54 +535,52 @@ void blastBomb(){
 }
 
 void timer(int i){
-	switch(i){
-		case 1://bombs explosion
+	if(i == 2){
+		//bots case
+		list<bots>::iterator itr;
+		if(botSteps == 0){
+			for(itr=botsList.begin();itr != botsList.end();itr++){
+				itr->directionToMove(0,neo.heroXpos,neo.heroYpos,ARENA.arena);
+			}
+		}
+		else{
+			for(itr=botsList.begin();itr != botsList.end();itr++){
+				itr->Xpos=(itr->Xpos)+(((itr->ito)-(itr->ifrom))/10.0);
+				itr->Ypos=(itr->Ypos)+(((itr->jfrom)-(itr->jto))/10.0);
+			}
+		}
+		botSteps=(botSteps+1)%11;
+		glutPostRedisplay();
+		glutTimerFunc(30,timer,2);
+	}
+	else{
+		if(i == bombQueue.top().ID){
+			double time;
+			if(gettimeofday(&later,NULL)){
+				perror("first time in timer");
+				exit(1);
+			}
+			time=timeval_diff(NULL,&later,&earlier)/1000000.0;
+			blastBomb();
 			if(!bombQueue.empty()){
-				double time;
-				if(gettimeofday(&later,NULL)){
-					perror("first time in timer");
-					exit(1);
+				list<bombs> bombslist;
+				for(;!bombQueue.empty();){
+					bombslist.push_back(bombQueue.top());
+					bombQueue.pop();
 				}
-				time=timeval_diff(NULL,&later,&earlier)/1000000.0;
-				blastBomb();
-				if(!bombQueue.empty()){
-					list<bombs> bombslist;
-					for(;!bombQueue.empty();){
-						bombslist.push_back(bombQueue.top());
-						bombQueue.pop();
-					}
-					bombs tempbomb;
-					list<bombs>::iterator it;
-					for(it=bombslist.begin();it!=bombslist.end();it++){
-						tempbomb=*it;
-						tempbomb.timeToBlast-=time;
-						bombQueue.push(tempbomb);
-					}
-					if(gettimeofday(&earlier,NULL)){
-						perror("second time in timer");
-					exit(1);
-					}
-					//glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
+				bombs tempbomb;
+				list<bombs>::iterator it;
+				for(it=bombslist.begin();it!=bombslist.end();it++){
+					tempbomb=*it;
+					tempbomb.timeToBlast-=time;
+					bombQueue.push(tempbomb);
+				}
+				if(gettimeofday(&earlier,NULL)){
+					perror("second time in timer");
+				exit(1);
 				}
 			}
-			break;
-		case 2://bots case
-			list<bots>::iterator itr;
-			if(botSteps == 0){
-				for(itr=botsList.begin();itr != botsList.end();itr++){
-					itr->directionToMove(0,neo.heroXpos,neo.heroYpos,ARENA.arena);
-				}
-			}
-			else{
-				for(itr=botsList.begin();itr != botsList.end();itr++){
-					itr->Xpos=(itr->Xpos)+(((itr->ito)-(itr->ifrom))/10.0);
-					itr->Ypos=(itr->Ypos)+(((itr->jfrom)-(itr->jto))/10.0);
-				}
-			}
-			botSteps=(botSteps+1)%11;
-			glutPostRedisplay();
-			glutTimerFunc(30,timer,2);
-			break;
+		}
 	}
 }
 
