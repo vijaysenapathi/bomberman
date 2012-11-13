@@ -32,7 +32,9 @@ void timer(int i);
 
 timeval earlier,later,interval;
 
-double prevTime=0;
+double prevTime=0,botTime=0.2;
+
+int botSteps=0;
 
 void undestructibles(float cx,float cy, float cz ){
 
@@ -318,6 +320,17 @@ void display(){
 			}
 		}
 	}
+	list<bots>::iterator itr;
+	for(itr=botsList.begin();itr!=botsList.end();itr++){
+		if(itr->ifrom == itr->ito && itr->jfrom==itr->jto){
+			glPushMatrix();
+			glTranslatef(itr->Xpos,itr->Ypos,0);
+			glRotatef(90*(itr->direction),0,0,1);
+			glRotatef(-90,1,0,0);
+			displaybot();
+			glPopMatrix();
+		}
+	}
 	base(0,0,0.7,8.5,5.5,0.2);
 	borders(0,5.6,0.5,8.5,0.1,0.2);
 	borders(0,-5.6,0.5,8.5,0.1,0.2);
@@ -557,6 +570,25 @@ void timer(int i){
 					glutTimerFunc(bombQueue.top().timeToBlast,timer,1);
 				}
 			}
+			break;
+		case 2://bots case
+			list<bots>::iterator itr;
+			if(true || botSteps == 0){
+				for(itr=botsList.begin();itr != botsList.end();itr++){
+					itr->directionToMove(0,neo.heroXpos,neo.heroYpos,ARENA.arena);
+				}
+			}
+			else{
+				for(itr=botsList.begin();itr != botsList.end();itr++){
+					itr->Xpos=(itr->Xpos)+(((itr->ito)-(itr->ifrom))/10.0);
+					itr->Ypos=(itr->Ypos)+(((itr->jfrom)-(itr->jto))/10.0);
+				}
+			}
+			botSteps=(botSteps+1)%10;
+			glutTimerFunc(300,timer,2);
+			glutPostRedisplay();
+			break;
+
 	}	
 }
 
@@ -564,7 +596,8 @@ void addbots(){
 	bots testbot1(8,1),testbot2(15,11);
 	botsList.push_back(testbot1);
 	botsList.push_back(testbot2);
-
+	glutTimerFunc(300,timer,2);
+	glutPostRedisplay();
 }
 
 int main(int argc, char* argv[]){
@@ -574,7 +607,6 @@ int main(int argc, char* argv[]){
 	  perror("inmain");
 	  exit(1);
   };
-  addbots();
 
   //  Initialize GLUT and process user parameters
   glutInit(&argc,argv);
@@ -595,6 +627,7 @@ int main(int argc, char* argv[]){
   glutSpecialFunc(specialKeys);
   //glutTimerFunc(0,timer,1);
  
+  addbots();
   //  Pass control to GLUT for events
   glutMainLoop();
  
