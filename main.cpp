@@ -11,6 +11,7 @@
 #include "hero.h"
 #include "bomb.h"
 #include "powerups.h"
+#include "bot.h"
 #include "timer.h"
 
 using namespace std;
@@ -24,6 +25,8 @@ grid ARENA;
 int hori=17,verti=11;
 
 priority_queue<bombs> bombQueue;
+
+list <bots> botsList;
 
 void timer(int i);
 
@@ -557,6 +560,12 @@ void timer(int i){
 	}	
 }
 
+void addbots(){
+	bots testbot1(8,1),testbot2(15,11);
+	botsList.push_back(testbot1);
+	botsList.push_back(testbot2);
+
+}
 
 int main(int argc, char* argv[]){
 
@@ -565,6 +574,7 @@ int main(int argc, char* argv[]){
 	  perror("inmain");
 	  exit(1);
   };
+  addbots();
 
   //  Initialize GLUT and process user parameters
   glutInit(&argc,argv);
