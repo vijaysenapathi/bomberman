@@ -31,6 +31,7 @@ class heros{
 		float speed;
 		bool bombPlaced;
 		bool infiBombs;
+		bool invincible;
 		heros(){
 			rotate_z=0;
 			rotate_x=0;
@@ -42,6 +43,7 @@ class heros{
 			speed=0.1;
 			bombPlaced=false;
 			infiBombs=false;
+			invincible=false;
 		}
 		void displayhero(){
 		 	//glTranslatef(0,5,0);
@@ -77,6 +79,22 @@ class heros{
 			float shoes[9]={199,97,20,210,105,30,255,127,36};
 			cuboid(-1,-8.8,-0.3-legdisp,0.9,0.4,1.0,shoes);//left shoe	
 			cuboid(1,-8.8,-0.3+legdisp,0.9,0.4,1.0,shoes);//right shoe	
+		}
+		void takePowerup(int i){
+			switch(i){
+				case 3:
+					speed+=0.1;
+					break;
+				case 4:
+					infiBombs=true;
+					break;
+				case 5:
+					invincible=true;
+					break;
+				case 2:
+					//end the game
+					break;
+			}
 		}
 };
 

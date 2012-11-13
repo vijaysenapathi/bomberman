@@ -18,6 +18,7 @@ class grid{
 		void readTheLevel(string filename);
 		void setbomb(int i,int j);
 		void removebomb(int i,int j);
+		void removePowerup(int i,int j);
 };
 
 
@@ -66,8 +67,9 @@ void grid::removebomb(int i,int j){
 		}
 		k+=2;
 	}
-
-
+}
+void grid::removePowerup(int i,int j){
+	arena[i-1][j-1].powerup=0;
 }
 void grid::readTheLevel(string filename){
 	      /*0 for nothing

@@ -509,20 +509,12 @@ void keyboardKeys(unsigned char key, int x, int y){
 				dropABomb();
 			}
 	}
-
-	switch (key){
-		case 'l':
-			neo.rotate_z+=5;
-			break;
-		case 'j':
-			neo.rotate_z-=5;
-			break;
-		case 'i':
-			neo.rotate_x+=5;
-			break;
-		case 'k':
-			neo.rotate_x-=5;
-			break;
+	int ipos,jpos;
+	ipos=9+floor(neo.heroXpos+0.5);
+	jpos=6-floor(neo.heroYpos+0.5);
+	if(ARENA.block(ipos,jpos).powerup != 0){
+		neo.takePowerup(ARENA.block(ipos,jpos).powerup);
+		ARENA.removePowerup(ipos,jpos);
 	}
 	glutPostRedisplay();
 }
