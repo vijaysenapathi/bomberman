@@ -293,15 +293,7 @@ void display(){
 	for(int i=1;i<=hori;i++){
 		for(int j=1;j<=verti;j++){
 			if(ARENA.block(i,j).empty){
-			}
-			else{
-				if(ARENA.block(i,j).destructible){
-					destructibles(i-9,6-j,0,0.45,0.45,0.45);
-				}
-				else if((i%2 == 0) && (j%2 == 0)){
-					undestructibles(i-9,6-j,0);
-				}
-				else if(ARENA.block(i,j).powerup != 0){
+				if(ARENA.block(i,j).powerup != 0){
 					switch(ARENA.block(i,j).powerup){
 						default:
 							glPushMatrix();
@@ -309,6 +301,14 @@ void display(){
 							displaypowerup();
 							glPopMatrix();
 					}
+				}
+			}
+			else{
+				if(ARENA.block(i,j).destructible){
+					destructibles(i-9,6-j,0,0.45,0.45,0.45);
+				}
+				else if((i%2 == 0) && (j%2 == 0)){
+					undestructibles(i-9,6-j,0);
 				}
 			}
 			if(ARENA.block(i,j).bomb){

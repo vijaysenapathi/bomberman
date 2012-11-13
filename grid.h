@@ -61,9 +61,7 @@ void grid::removebomb(int i,int j){
 		if(I >= 1 && I <= 17 && J >= 1 && J <= 11){
 			if(arena[I-1][J-1].destructible){
 				arena[I-1][J-1].destructible=false;
-				if(arena[I-1][J-1].powerup == 0){
-					arena[I-1][J-1].empty=true;
-				}
+				arena[I-1][J-1].empty=true;
 			}
 		}
 		k+=2;
