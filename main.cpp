@@ -53,17 +53,23 @@ double prevTime=0;
  * the movement of bots between 2 squares */
 int botSteps=0;
 
+/* the glutDiaplay() function */
 void display(){
 	glEnable(GL_POINT_SMOOTH | GL_LINE_SMOOTH | GL_POLYGON_SMOOTH);
+	//setting the background color to a shade of sky blue
 	glClearColor((176.0/255.0),(226.0/255.0),1,1);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+	//setting the transformation matrix to identity
   	glLoadIdentity();
-	gluLookAt(0,0,0,0,0,-5,0,1,0); 
+	//setting the view point
+	gluLookAt(0,0,0,0,0,-5,0,1,0);
 	glFrustum(-10,10,6,-6,-5,10);
+	//setting view of the game
 	glRotatef(neo.rotate_x, 1.0, 0.0, 0.0 );
 	glRotatef(neo.rotate_z, 0.0, 0.0, 1.0 );
 	glScalef(0.1,0.1,0.1);
+	//drawing the board and all its blocks
 	for(int i=1;i<=hori;i++){
 		for(int j=1;j<=verti;j++){
 			if(ARENA.block(i,j).empty){
@@ -91,6 +97,7 @@ void display(){
 			}
 		}
 	}
+	//drawing the bots in their respective positions
 	list<bots>::iterator itr;
 	for(itr=botsList.begin();itr!=botsList.end();itr++){
 		glPushMatrix();
@@ -100,17 +107,22 @@ void display(){
 		displaybot();
 		glPopMatrix();
 	}
+	//drawing the base
 	base(0,0,0.7,8.5,5.5,0.2);
+	//drawing the borders
 	borders(0,5.6,0.5,8.5,0.1,0.2);
 	borders(0,-5.6,0.5,8.5,0.1,0.2);
 	borders(8.6,0,0.5,0.1,5.5,0.2);
 	borders(-8.6,0,0.5,0.1,5.5,0.2);
+	//displaying the hero
 	glPushMatrix();
 	glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
 	glRotatef(90*(neo.heroDirection),0,0,1);
 	neo.displayhero();
 	glPopMatrix();	
+	//drawing everything into the second buffer
 	glFlush();
+	//swapping the second buffe with the first
 	glutSwapBuffers(); 
 }
 
@@ -135,34 +147,31 @@ void specialKeys( int key, int x, int y ) {
  
 }
 
-int myFloor(double x){
-	if((x-floor(x)) == 0){
-		return x-1;
-	}
-	else{
-		return floor(x);
-	}
-}
-
+//just the fractional part of x
 float fracpart(float x){
 	return (x-floor(x));
 }
 
+//a good function for determining the collision detection of the player
 bool collisionDetection(double xcor, double ycor){
 	float xr=xcor+0.29,xl=xcor-0.29;
 	float yu=ycor+0.29,yd=ycor-0.29;
 	int i0,i1,i2,i3,j0,j1,j2,j3;
+	//taking 4 points: above, below, left, right 
+	//of the given point at a certain distance(0.29)
 	i0=9+floor(xcor+0.5);j0=6-floor(yd+0.5);
 	i1=9+floor(xr+0.5);j1=6-floor(ycor+0.5);
 	i2=9+floor(xcor+0.5);j2=6-floor(yu+0.5);
 	i3=9+floor(xl+0.5);j3=6-floor(ycor+0.5);
+	//this returns true if all the above points are empty
 	return (ARENA.block(i0,j0).empty 
 			&& ARENA.block(i1,j1).empty 
 			&& ARENA.block(i2,j2).empty 
 			&& ARENA.block(i3,j3).empty);
 }
 
-void movingLimbs(heros &hero){//a function for implementing the animation of walking of the players
+//a function for implementing the animation of walking of the players
+void movingLimbs(heros &hero){	
 	if(hero.legdisp >= MAX_FOOT_DISTANCE && hero.rightLeg){
 		hero.rightLeg=false;
 	}
@@ -180,12 +189,14 @@ void movingLimbs(heros &hero){//a function for implementing the animation of wal
 
 }
 
+//a routine for dropping a bomb
 void dropABomb();
 
+//the glutKeyboard keys func
 void keyboardKeys(unsigned char key, int x, int y){
 	float dummyX,dummyY;
 	switch (key){
-		case 'w':
+		case 'w'://going up
 			dummyX=neo.heroXpos;
 			dummyY=neo.heroYpos;
 			dummyY+=neo.speed;
@@ -194,12 +205,15 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			neo.heroDirection=2;
 			if(neo.heroDirection != neo.heroPrevDirection){
+				//changing the distance between legs to zero
+				//whenever the hero turns
 				neo.legdisp=0;
 				neo.heroPrevDirection=neo.heroDirection;
 			}
+			//calling the function to move the players hands and legs
 			movingLimbs(neo);
 			break;
-		case 'a':
+		case 'a'://going left
 			dummyX=neo.heroXpos;
 			dummyY=neo.heroYpos;
 			dummyX-=neo.speed;
@@ -213,7 +227,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			movingLimbs(neo);
 			break;
-		case 's':
+		case 's'://going down
 			dummyX=neo.heroXpos;
 			dummyY=neo.heroYpos;
 			dummyY-=neo.speed;
@@ -227,7 +241,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			movingLimbs(neo);
 			break;
-		case 'd':
+		case 'd'://going right
 			dummyX=neo.heroXpos;
 			dummyY=neo.heroYpos;
 			dummyX+=neo.speed;
@@ -241,7 +255,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 			}
 			movingLimbs(neo);
 			break;
-		case ' ':
+		case ' '://placing a bomb
 			if((!neo.bombPlaced) || (neo.infiBombs)){
 				dropABomb();
 			}
@@ -249,6 +263,8 @@ void keyboardKeys(unsigned char key, int x, int y){
 	int ipos,jpos;
 	ipos=9+floor(neo.heroXpos+0.5);
 	jpos=6-floor(neo.heroYpos+0.5);
+	//removing the powerup when ever the player comes to 
+	//a place where a powerup is present
 	if(ARENA.block(ipos,jpos).powerup != 0){
 		neo.takePowerup(ARENA.block(ipos,jpos).powerup);
 		ARENA.removePowerup(ipos,jpos);
@@ -256,20 +272,26 @@ void keyboardKeys(unsigned char key, int x, int y){
 	glutPostRedisplay();
 }
 
+//the initial bombs ID
 int bombsID=3;
 
+//routine for dropping a bomb
 void dropABomb(){
 	float x=neo.heroXpos,y=neo.heroYpos;
+	//setting bombplaced by neo to true
 	neo.bombPlaced=true; 
 	int i,j;
 	i=9+floor(x+0.5);
 	j=6-floor(y+0.5);
+	//placing a bomb only if there's no bomb at that place
 	if(!ARENA.block(i,j).bomb){
 		if(gettimeofday(&later,NULL)){
 			perror("dropABomb error");
 			exit(1);
 		}
 		double time=(timeval_diff(NULL,&later,&earlier)/1000000.0);
+		//updating the times of bomb placing only if the
+		//the bomb queue is not empty 
 		if(!bombQueue.empty()){
 			list<bombs> bombslist;
 			for(;!bombQueue.empty();){
@@ -288,6 +310,7 @@ void dropABomb(){
 			perror("second time in drobABomb()");
 			exit(1);
 		}
+		//inserting a bomb into the bomb queue
 		bombs aBomb(i,j,4000);
 		bombQueue.push(aBomb);
 		ARENA.setbomb(i,j);
@@ -296,6 +319,7 @@ void dropABomb(){
 	}
 }
 
+//function for spawning bots if ever one dies
 void spawnABot(){
 	int i=neo.heroXpos;
 	if(i > 0){
@@ -308,6 +332,7 @@ void spawnABot(){
 	}
 }
 
+//routine for killing a bot
 void killBots(int i,int j){
 	int i1,j1;
 	list<bots>::iterator itr,itr1;
@@ -322,6 +347,7 @@ void killBots(int i,int j){
 	}
 }
 
+//rountine for blasting a bomb
 void blastBomb(){
 	neo.bombPlaced=false;
 	int i,j;
@@ -330,6 +356,8 @@ void blastBomb(){
 	ARENA.removebomb(i,j);
 	bombQueue.pop();
 	int powerupPos[]={i-1,j,i,j-1,i+1,j,i,j+1},temp1,temp2;
+	//staring a glutTimerFunction for countdown
+	//of disappearance of the bomb
 	for(int k=0;k<4;k++){
 		temp1=powerupPos[2*k];
 		temp2=powerupPos[2*k+1];
@@ -337,6 +365,7 @@ void blastBomb(){
 			glutTimerFunc(5000,timer,-(100*temp1+temp2));
 		}
 	}
+	//implementation of chain bomb blasting
 	if(!bombQueue.empty()){
 		list<bombs> bombslist;
 		for(;!bombQueue.empty();){
@@ -348,7 +377,6 @@ void blastBomb(){
 		int i1,j1;
 		for(it=bombslist.begin();it!=bombslist.end();it++){
 			tempbomb=*it;
-			//tempbomb.timeToBlast-=time;
 			i1=tempbomb.Xpos;j1=tempbomb.Ypos;
 			if((abs(i-i1)+abs(j-j1)) == 1){
 				if(tempbomb.timeToBlast > 300){
@@ -363,8 +391,10 @@ void blastBomb(){
 	glutPostRedisplay();
 }
 
+//the timer callback function for glutTimerFunc()
 void timer(int i){
 	if(i< 0){
+		//removing a poweup if not taken within 5 sec
 		i=-i;
 		int a,b;
 		a=i/100;
@@ -390,6 +420,7 @@ void timer(int i){
 		glutTimerFunc(30,timer,2);
 	}
 	else{
+		//callback function for blasting of bombs
 		if(!bombQueue.empty()){
 			if(i == bombQueue.top().ID){
 				double time;
@@ -422,10 +453,8 @@ void timer(int i){
 	}
 }
 
+//adding the bots at the beginning
 void addbots(){
-	/*bots testbot1(8,1),testbot2(15,11);
-	botsList.push_back(testbot1);
-	botsList.push_back(testbot2);*/
 	int a,b;
 	for(int i=0;i<ARENA.botSpawns.size();i++){
 		a=ARENA.botSpawns[i].first;
@@ -437,6 +466,7 @@ void addbots(){
 	glutTimerFunc(30,timer,2);
 }
 
+//the main() function
 int main(int argc, char* argv[]){
 
   ARENA.readTheLevel("leveltest");
