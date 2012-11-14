@@ -526,6 +526,32 @@ void dropABomb(){
 	}
 }
 
+void spawnABot(){
+	int i=neo.heroXpos;
+	if(i > 0){
+		bots testBot(1,6);
+		botsList.push_back(testBot);
+	}
+	else{
+		bots testBot(17,6);
+		botsList.push_back(testBot);
+	}
+}
+
+void killBots(int i,int j){
+	int i1,j1;
+	list<bots>::iterator itr,itr1;
+	for(itr = botsList.begin();itr != botsList.end();itr++){
+		i1=9+floor((itr->Xpos)+0.5);
+		j1=6-floor((itr->Ypos)+0.5);
+		if(((abs(i-i1))+(abs(j-j1))) == 1 || ((abs(i-i1))+(abs(j-j1))) == 0){
+			itr=botsList.erase(itr);
+			itr--;
+			spawnABot();
+		}
+	}
+}
+
 void blastBomb(){
 	neo.bombPlaced=false;
 	int i,j;
@@ -555,6 +581,7 @@ void blastBomb(){
 			bombQueue.push(tempbomb);
 		}
 	}
+	killBots(i,j);
 	glutPostRedisplay();
 }
 

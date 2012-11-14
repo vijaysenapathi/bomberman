@@ -37,8 +37,6 @@ grid::grid(){
 			}
 		}
 	}
-	//makedestructible(2,1,0);
-	//makedestructible(5,2,0);
 }
 
 
