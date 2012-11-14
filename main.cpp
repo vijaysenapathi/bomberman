@@ -2,6 +2,7 @@
 #include<GL/glu.h>
 #include<GL/freeglut.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <math.h>
 #include <queue>
@@ -495,7 +496,7 @@ void dropABomb(){
 	j=6-floor(y+0.5);
 	if(!ARENA.block(i,j).bomb){
 		if(gettimeofday(&later,NULL)){
-			perror("drop A Bomb error");
+			perror("dropABomb error");
 			exit(1);
 		}
 		double time=(timeval_diff(NULL,&later,&earlier)/1000000.0);
@@ -521,7 +522,7 @@ void dropABomb(){
 		bombQueue.push(aBomb);
 		ARENA.setbomb(i,j);
 		glutPostRedisplay();
-		glutTimerFunc(2000,timer,bombsID++);	
+		glutTimerFunc(3000,timer,bombsID++);	
 	}
 }
 
@@ -532,6 +533,28 @@ void blastBomb(){
 	j=bombQueue.top().Ypos;
 	ARENA.removebomb(i,j);
 	bombQueue.pop();
+	if(!bombQueue.empty()){
+		list<bombs> bombslist;
+		for(;!bombQueue.empty();){
+			bombslist.push_back(bombQueue.top());
+			bombQueue.pop();
+		}
+		bombs tempbomb;
+		list<bombs>::iterator it;
+		int i1,j1;
+		for(it=bombslist.begin();it!=bombslist.end();it++){
+			tempbomb=*it;
+			//tempbomb.timeToBlast-=time;
+			i1=tempbomb.Xpos;j1=tempbomb.Ypos;
+			if((abs(i-i1)+abs(j-j1)) == 1){
+				if(tempbomb.timeToBlast > 300){
+					tempbomb.timeToBlast=300;
+					glutTimerFunc(300,timer,tempbomb.ID);
+				}
+			}
+			bombQueue.push(tempbomb);
+		}
+	}
 	glutPostRedisplay();
 }
 
@@ -555,30 +578,32 @@ void timer(int i){
 		glutTimerFunc(30,timer,2);
 	}
 	else{
-		if(i == bombQueue.top().ID){
-			double time;
-			if(gettimeofday(&later,NULL)){
-				perror("first time in timer");
-				exit(1);
-			}
-			time=timeval_diff(NULL,&later,&earlier)/1000000.0;
-			blastBomb();
-			if(!bombQueue.empty()){
-				list<bombs> bombslist;
-				for(;!bombQueue.empty();){
-					bombslist.push_back(bombQueue.top());
-					bombQueue.pop();
+		if(!bombQueue.empty()){
+			if(i == bombQueue.top().ID){
+				double time;
+				if(gettimeofday(&later,NULL)){
+					perror("first time in timer");
+					exit(1);
 				}
-				bombs tempbomb;
-				list<bombs>::iterator it;
-				for(it=bombslist.begin();it!=bombslist.end();it++){
-					tempbomb=*it;
-					tempbomb.timeToBlast-=time;
-					bombQueue.push(tempbomb);
-				}
-				if(gettimeofday(&earlier,NULL)){
-					perror("second time in timer");
-				exit(1);
+				time=timeval_diff(NULL,&later,&earlier)/1000000.0;
+				blastBomb();
+				if(!bombQueue.empty()){
+					list<bombs> bombslist;
+					for(;!bombQueue.empty();){
+						bombslist.push_back(bombQueue.top());
+						bombQueue.pop();
+					}
+					bombs tempbomb;
+					list<bombs>::iterator it;
+					for(it=bombslist.begin();it!=bombslist.end();it++){
+						tempbomb=*it;
+						tempbomb.timeToBlast-=time;
+						bombQueue.push(tempbomb);
+					}
+					if(gettimeofday(&earlier,NULL)){
+						perror("second time in timer");
+					exit(1);
+					}
 				}
 			}
 		}
