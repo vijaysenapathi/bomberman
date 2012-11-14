@@ -14,272 +14,45 @@
 #include "powerups.h"
 #include "bot.h"
 #include "timer.h"
+#include "arenagraphics.h"
 
 using namespace std;
 
-heros neo;//the name of the player is neo
+//the name of the player is neo
+heros neo;
 
+//the input for glutDisplay() function
 void display();
+
+//input for glutSpecialKeys function
 void specialKeys();
 
+//The grid object for storing elements of the arena played
 grid ARENA;
+
+//the number of columns and rows
 int hori=17,verti=11;
 
+//a priority queue for storing the bombs and minimum 
+//is based on the time left to blast
 priority_queue<bombs> bombQueue;
 
+/* The list of bots */
 list <bots> botsList;
 
+/*The call back function for glutTimerFunc()*/
 void timer(int i);
 
+/*A timeval objects for storing time of
+ * different events */
 timeval earlier,later,interval;
 
 double prevTime=0;
 
+/* a variable which helps in 
+ * the movement of bots between 2 squares */
 int botSteps=0;
 
-void undestructibles(float cx,float cy, float cz ){
-
-  //Yellow size-FRONT
-  glBegin(GL_POLYGON);
-  glColor3f(   0,  (100.0/255.0), 0 );
-  glVertex3f(  cx+0.5, cy-0.5, cz-0.5 );
-  glVertex3f(  cx+0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx-0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx-0.5, cy-0.5, cz-0.5 );
-  glEnd();
-
- 
-  // White side - BACK
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  1.0, 1.0 );
-  glVertex3f(  cx+0.5, cy-0.5, cz+0.5 );
-  glVertex3f(  cx+0.5,  cy+0.5, cz+0.5 );
-  glVertex3f( cx-0.5,  cy+0.5, cz+0.5 );
-  glVertex3f( cx-0.5, cy-0.5, cz+0.5 );
-  glEnd();
- 
- 
-  // Purple side - RIGHT
-  glBegin(GL_POLYGON);
-  glColor3f(  0.0,  1.0,  0.0 );
-  glVertex3f( cx+0.5, cy-0.5, cz-0.5 );
-  glVertex3f( cx+0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx+0.5,  cy+0.5,  cz+0.5 );
-  glVertex3f( cx+0.5, cy-0.5,  cz+0.5 );
-  glEnd();
- 
- 
-  // Green side - LEFT
-  glBegin(GL_POLYGON);
-  glColor3f(   0.0,  1.0,  0.0 );
-  glVertex3f( cx-0.5, cy-0.5,  cz+0.5 );
-  glVertex3f( cx-0.5,  cy+0.5,  cz+0.5 );
-  glVertex3f( cx-0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx-0.5, cy-0.5, cz-0.5 );
-  glEnd();
- 
-  // Blue side - TOP
-  glBegin(GL_POLYGON);
-  glColor3f(   0.0,  (205.0/255.0),  0 );
-  glVertex3f(  cx+0.5,  cy+0.5,  cz+0.5 );
-  glVertex3f(  cx+0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx-0.5,  cy+0.5, cz-0.5 );
-  glVertex3f( cx-0.5,  cy+0.5,  cz+0.5 );
-  glEnd();
- 
-  // Red side - BOTTOM
-  glBegin(GL_POLYGON);
-  glColor3f(   0.0,  (205.0/255.0),  0.0 );
-  glVertex3f(  cx+0.5, cy-0.5, cz-0.5 );
-  glVertex3f(  cx+0.5, cy-0.5,  cz+0.5 );
-  glVertex3f( cx-0.5, cy-0.5,  cz+0.5 );
-  glVertex3f( cx-0.5, cy-0.5, cz-0.5 );
-  glEnd();
-
-}
-
-void base(float cx,float cy, float cz ,float lx,float ly,float lz){
-
-  //Yellow size-FRONT
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  1.0, 0 );
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
- 
-  // White side - BACK
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  1.0, 0 );
-  glVertex3f(  cx+lx, cy-ly, cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz+lz );
-  glEnd();
- 
- 
-  // Purple side - RIGHT
-  glBegin(GL_POLYGON);
-  glColor3f(  1.0,  0.0,  0.0 );
-  glVertex3f( cx+lx, cy-ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly,  cz+lz );
-  glVertex3f( cx+lx, cy-ly,  cz+lz );
-  glEnd();
- 
- 
-  // Green side - LEFT
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  0.0,  0.0 );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
- 
-  // Blue side - TOP
-  glBegin(GL_POLYGON);
-  glColor3f(   (205.0/255.0),  0.0,  0.0 );
-  glVertex3f(  cx+lx,  cy+ly,  cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glEnd();
- 
-  // Red side - BOTTOM
-  glBegin(GL_POLYGON);
-  glColor3f(   (205.0/255.0),  0.0,  0.0 );
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
-}
-
-void borders(float cx,float cy, float cz ,float lx,float ly,float lz){
-
-  //Yellow size-FRONT
-  glBegin(GL_POLYGON);
-  glColor4f(   0.0,  0.0, 1.0 ,0.1);
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
- 
-  // White side - BACK
-  glBegin(GL_POLYGON);
-  glColor4f(   0,  0, 1.0,0.1 );
-  glVertex3f(  cx+lx, cy-ly, cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz+lz );
-  glEnd();
- 
- 
-  // Purple side - RIGHT
-  glBegin(GL_POLYGON);
-  glColor4f(  (65.0/255.0),  (105.0/255.0),  (225.0/255.0),0.1 );
-  glVertex3f( cx+lx, cy-ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly,  cz+lz );
-  glVertex3f( cx+lx, cy-ly,  cz+lz );
-  glEnd();
- 
- 
-  // Green side - LEFT
-  glBegin(GL_POLYGON);
-  glColor4f(   (65.0/255.0),  (105.0/255.0),  (225.0/255.0) ,0.1);
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
- 
-  // Blue side - TOP
-  glBegin(GL_POLYGON);
-  glColor4f(   (65.0/255.0),  (105.0/255.0),  (225./255.0) ,0.1);
-  glVertex3f(  cx+lx,  cy+ly,  cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glEnd();
- 
-  // Red side - BOTTOM
-  glBegin(GL_POLYGON);
-  glColor4f(   (65.0/255.0),  (105.0/255.0),  (225.0/255.0),0.1 );
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
-}
-void destructibles(float cx,float cy, float cz ,float lx,float ly,float lz){
-
-  //Yellow size-FRONT
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  (165.0/255.0), 0 );
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
- 
-  // White side - BACK
-  glBegin(GL_POLYGON);
-  glColor3f(   1.0,  1.0, 0 );
-  glVertex3f(  cx+lx, cy-ly, cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz+lz );
-  glEnd();
- 
- 
-  // Purple side - RIGHT
-  glBegin(GL_POLYGON);
-  glColor3f(  (205.0/255.0),  (133.0/255.0),  0.0 );
-  glVertex3f( cx+lx, cy-ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx+lx,  cy+ly,  cz+lz );
-  glVertex3f( cx+lx, cy-ly,  cz+lz );
-  glEnd();
- 
- 
-  // Green side - LEFT
-  glBegin(GL_POLYGON);
-  glColor3f(   (205.0/255.0),  (133.0/255.0),  0.0 );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
- 
-  // Blue side - TOP
-  glBegin(GL_POLYGON);
-  glColor3f(   (238.0/255.0),  (154.0/255.0),  0.0 );
-  glVertex3f(  cx+lx,  cy+ly,  cz+lz );
-  glVertex3f(  cx+lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly, cz-lz );
-  glVertex3f( cx-lx,  cy+ly,  cz+lz );
-  glEnd();
- 
-  // Red side - BOTTOM
-  glBegin(GL_POLYGON);
-  glColor3f(   (238.0/255.0),  (154.0/255.0),  0.0 );
-  glVertex3f(  cx+lx, cy-ly, cz-lz );
-  glVertex3f(  cx+lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly,  cz+lz );
-  glVertex3f( cx-lx, cy-ly, cz-lz );
-  glEnd();
-
-}
- 
 void display(){
 	glEnable(GL_POINT_SMOOTH | GL_LINE_SMOOTH | GL_POLYGON_SMOOTH);
 	glClearColor((176.0/255.0),(226.0/255.0),1,1);
