@@ -556,6 +556,14 @@ void blastBomb(){
 	j=bombQueue.top().Ypos;
 	ARENA.removebomb(i,j);
 	bombQueue.pop();
+	int powerupPos[]={i-1,j,i,j-1,i+1,j,i,j+1},temp1,temp2;
+	for(int k=0;k<4;k++){
+		temp1=powerupPos[2*k];
+		temp2=powerupPos[2*k+1];
+		if(1<=temp1 && 17>=temp1 && 1<=temp2 && 17>=temp2){
+			glutTimerFunc(5000,timer,-(100*temp1+temp2));
+		}
+	}
 	if(!bombQueue.empty()){
 		list<bombs> bombslist;
 		for(;!bombQueue.empty();){
@@ -583,7 +591,14 @@ void blastBomb(){
 }
 
 void timer(int i){
-	if(i == 2){
+	if(i< 0){
+		i=-i;
+		int a,b;
+		a=i/100;
+		b=i%100;
+		ARENA.removePowerup(a,b);
+	}
+	else if(i == 2){
 		//bots case
 		list<bots>::iterator itr;
 		if(botSteps == 0){
