@@ -75,10 +75,47 @@ void displaypowerup(){
 	float colors[9]={218,112,214,255,131,250,238,122,233};
 	cuboidfunc(0,0,0,1,1,1,colors);
 	float upperpart[]={255,255,255,255,255,255,255,255,255};
-	cuboidfunc(0.4,0,-1.3,0.3,0.5,0.2,upperpart);
-	cuboidfunc(-0.4,0,-1.3,0.3,0.5,0.2,upperpart);
+	cuboidfunc(0.4,0,-1.3,0.3,0.3,0.2,upperpart);
+	cuboidfunc(-0.4,0,-1.3,0.3,0.3,0.2,upperpart);
 	cuboidfunc(0,0,-1.3,0.1,0.1,0.2,upperpart);
 	glPopMatrix();
+}
+
+void displaypowerup(int i){
+	if(i == 4){
+		glPushMatrix();
+		glScalef(0.4,0.4,0.4);
+		float colors[9]={218,112,214,255,131,250,238,122,233};
+		cuboidfunc(0,0,0,1,1,1,colors);
+		float upperpart[]={255,255,255,255,255,255,255,255,255};
+		cuboidfunc(0.4,0,-1.3,0.3,0.3,0.2,upperpart);
+		cuboidfunc(-0.4,0,-1.3,0.3,0.3,0.2,upperpart);
+		cuboidfunc(0,0,-1.3,0.1,0.1,0.2,upperpart);
+		glPopMatrix();
+	}
+	else if(i == 3){
+		glPushMatrix();
+		glScalef(0.4,0.4,0.4);
+		float colors[9]={218,112,214,255,131,250,238,122,233};
+		cuboidfunc(0,0,0,1,1,1,colors);
+		float upperpart[]={255,255,255,255,255,255,255,255,255};
+		cuboidfunc(0.4,-0.3,-1.3,0.2,0.5,0.2,upperpart);
+		cuboidfunc(-0.4,-0.3,-1.3,0.2,0.5,0.2,upperpart);
+		cuboidfunc(0,0.3,-1.3,0.2,0.5,0.2,upperpart);
+		glPopMatrix();
+	}
+	else if(i == 5){
+		glPushMatrix();
+		glScalef(0.4,0.4,0.4);
+		float colors[9]={218,112,214,255,131,250,238,122,233};
+		cuboidfunc(0,0,0,1,1,1,colors);
+		float upperpart[]={255,255,255,255,255,255,255,255,255};
+		glPushMatrix();
+		glRotatef(45,0,0,1);
+		cuboidfunc(0,0,-1.3,0.5,0.5,0.2,upperpart);
+		glPopMatrix();
+		glPopMatrix();
+	}
 }
 
 #endif

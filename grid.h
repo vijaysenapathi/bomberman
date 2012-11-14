@@ -13,6 +13,7 @@ class grid{
 		//vector<vector <square> > gridV;
 		square arena[HORIZONTAL_LENGTH_ARENA][VERTICAL_LENGTH_ARENA];
 		grid();
+		vector < pair<int,int> > botSpawns;
 		square block(int a,int b);//access the block at i,j
 		void makedestructible(int a,int b,int powerUp);
 		void readTheLevel(string filename);
@@ -92,8 +93,7 @@ void grid::readTheLevel(string filename){
 				case 0:
 					arena[j-1][i-1].powerup=0;
 					arena[j-1][i-1].destructible=false;
-					arena[j-1][i-1].empty=true;
-					continue;				
+					arena[j-1][i-1].empty=true;			
 					break;
 				case 1:
 					arena[j-1][i-1].empty=false;
@@ -119,6 +119,13 @@ void grid::readTheLevel(string filename){
 					arena[j-1][i-1].empty=false;
 					arena[j-1][i-1].destructible=true;
 					arena[j-1][i-1].powerup=5;
+					break;
+				case 6:
+					arena[j-1][i-1].powerup=0;
+					arena[j-1][i-1].destructible=false;
+					arena[j-1][i-1].empty=true;
+					pair <int,int> temppair (j,i);
+					botSpawns.push_back(temppair);
 					break;
 			}
 		}

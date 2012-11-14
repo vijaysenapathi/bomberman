@@ -295,13 +295,10 @@ void display(){
 		for(int j=1;j<=verti;j++){
 			if(ARENA.block(i,j).empty){
 				if(ARENA.block(i,j).powerup != 0){
-					switch(ARENA.block(i,j).powerup){
-						default:
-							glPushMatrix();
-							glTranslatef(i-9,6-j,0);
-							displaypowerup();
-							glPopMatrix();
-					}
+						glPushMatrix();
+						glTranslatef(i-9,6-j,0);
+						displaypowerup(ARENA.block(i,j).powerup);
+						glPopMatrix();
 				}
 			}
 			else{
@@ -638,9 +635,16 @@ void timer(int i){
 }
 
 void addbots(){
-	bots testbot1(8,1),testbot2(15,11);
+	/*bots testbot1(8,1),testbot2(15,11);
 	botsList.push_back(testbot1);
-	botsList.push_back(testbot2);
+	botsList.push_back(testbot2);*/
+	int a,b;
+	for(int i=0;i<ARENA.botSpawns.size();i++){
+		a=ARENA.botSpawns[i].first;
+		b=ARENA.botSpawns[i].second;
+		bots aBot(a,b);
+		botsList.push_back(aBot);
+	}
 	glutPostRedisplay();
 	glutTimerFunc(30,timer,2);
 }
