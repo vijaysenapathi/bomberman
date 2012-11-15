@@ -192,6 +192,9 @@ void movingLimbs(heros &hero){
 //a routine for dropping a bomb
 void dropABomb();
 
+//gameover and game pause routines
+void finishGame(int i);
+
 //the glutKeyboard keys func
 void keyboardKeys(unsigned char key, int x, int y){
 	float dummyX,dummyY;
@@ -259,15 +262,23 @@ void keyboardKeys(unsigned char key, int x, int y){
 			if((!neo.bombPlaced) || (neo.infiBombs)){
 				dropABomb();
 			}
+			break;
+		case 27://pausing the game
+			finishGame(2);
+			break;
 	}
+	//assigning the square in which the player is present to 2 variables
 	int ipos,jpos;
 	ipos=9+floor(neo.heroXpos+0.5);
 	jpos=6-floor(neo.heroYpos+0.5);
 	//removing the powerup when ever the player comes to 
 	//a place where a powerup is present
-	if(ARENA.block(ipos,jpos).powerup != 0){
+	if(ARENA.block(ipos,jpos).powerup != 0 && ARENA.block(ipos,jpos).powerup != 2){
 		neo.takePowerup(ARENA.block(ipos,jpos).powerup);
 		ARENA.removePowerup(ipos,jpos);
+	}
+	else if(ARENA.block(ipos,jpos).powerup == 2){
+		finishGame(0);
 	}
 	glutPostRedisplay();
 }
@@ -387,6 +398,17 @@ void blastBomb(){
 			bombQueue.push(tempbomb);
 		}
 	}
+	//assigning the square in which the player is present to 2 variables
+	int ipos,jpos;
+	ipos=9+floor(neo.heroXpos+0.5);
+	jpos=6-floor(neo.heroYpos+0.5);
+	//killing the player if he is not invincible and present in the vicinity
+	if(!(neo.invincible)){
+		if((abs(i-ipos)+abs(j-jpos)) == 1 || (abs(i-ipos)+abs(j-jpos)) == 0){
+			finishGame(1);
+		}
+	}
+	//killing bots if ever they are in the vicinity
 	killBots(i,j);
 	glutPostRedisplay();
 }
@@ -416,6 +438,19 @@ void timer(int i){
 			}
 		}
 		botSteps=(botSteps+1)%11;
+		//assigning the square in which the player is present to 2 variables
+		int ipos,jpos;
+		ipos=9+floor(neo.heroXpos+0.5);
+		jpos=6-floor(neo.heroYpos+0.5);
+		//finding whether player is in contact with any of the bots
+		int ibot,jbot;
+		for(itr=botsList.begin();itr != botsList.end();itr++){
+		ibot=9+floor((itr->Xpos)+0.5);
+		jbot=6-floor((itr->Ypos)+0.5);
+		if((abs(ipos-ibot)+abs(jpos-jbot)) == 0){
+			finishGame(1);
+		}
+		}
 		glutPostRedisplay();
 		glutTimerFunc(30,timer,2);
 	}
@@ -464,6 +499,22 @@ void addbots(){
 	}
 	glutPostRedisplay();
 	glutTimerFunc(30,timer,2);
+}
+
+
+void finishGame(int i){
+	//0 for gameover and won
+	//1 for gameover and lost
+	//2 for pausing the game
+	if(i == 0){
+		cout<<"finished first"<<endl;
+	}
+	else if(i == 1){
+		cout<<"finished second"<<endl;
+	}
+	else if(i == 2){
+		cout<<"finished third"<<endl;
+	}
 }
 
 //the main() function
