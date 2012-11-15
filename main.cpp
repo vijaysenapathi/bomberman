@@ -15,6 +15,7 @@
 #include "bot.h"
 #include "timer.h"
 #include "arenagraphics.h"
+#include "gameOver.h"
 
 using namespace std;
 
@@ -53,73 +54,86 @@ double prevTime=0;
  * the movement of bots between 2 squares */
 int botSteps=0;
 
+//variables for win/lose
+bool win=false,lose=false;
+
 /* the glutDiaplay() function */
 void display(){
-	glEnable(GL_POINT_SMOOTH | GL_LINE_SMOOTH | GL_POLYGON_SMOOTH);
-	//setting the background color to a shade of sky blue
-	glClearColor((176.0/255.0),(226.0/255.0),1,1);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	//setting the transformation matrix to identity
-  	glLoadIdentity();
-	//setting the view point
-	gluLookAt(0,0,0,0,0,-5,0,1,0);
-	glFrustum(-10,10,6,-6,-5,10);
-	//setting view of the game
-	glRotatef(neo.rotate_x, 1.0, 0.0, 0.0 );
-	glRotatef(neo.rotate_z, 0.0, 0.0, 1.0 );
-	glScalef(0.1,0.1,0.1);
-	//drawing the board and all its blocks
-	for(int i=1;i<=hori;i++){
-		for(int j=1;j<=verti;j++){
-			if(ARENA.block(i,j).empty){
-				if(ARENA.block(i,j).powerup != 0){
-						glPushMatrix();
-						glTranslatef(i-9,6-j,0);
-						displaypowerup(ARENA.block(i,j).powerup);
-						glPopMatrix();
+	if(lose){
+		youlose();
+	}
+	else if(win){
+		youwin();
+	}
+	else{
+		glEnable(GL_POINT_SMOOTH | GL_LINE_SMOOTH | GL_POLYGON_SMOOTH);
+		//setting the background color to a shade of sky blue
+		glClearColor((176.0/255.0),(226.0/255.0),1,1);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_MODELVIEW);
+		//setting the transformation matrix to identity
+  		glLoadIdentity();
+		//setting the view point
+		gluLookAt(0,0,0,0,0,-5,0,1,0);
+		glFrustum(-10,10,6,-6,-5,10);
+		//setting view of the game
+		glRotatef(neo.rotate_x, 1.0, 0.0, 0.0 );
+		glRotatef(neo.rotate_z, 0.0, 0.0, 1.0 );
+		glScalef(0.1,0.1,0.1);
+		//drawing the board and all its blocks
+		for(int i=1;i<=hori;i++){
+			for(int j=1;j<=verti;j++){
+				if(ARENA.block(i,j).empty){
+					if(ARENA.block(i,j).powerup != 0){
+							glPushMatrix();
+							glTranslatef(i-9,6-j,0);
+							displaypowerup(ARENA.block(i,j).powerup);
+							glPopMatrix();
+					}
 				}
-			}
-			else{
-				if(ARENA.block(i,j).destructible){
-					destructibles(i-9,6-j,0,0.45,0.45,0.45);
+				else{
+					if(ARENA.block(i,j).destructible){
+						destructibles(i-9,6-j,0,0.45,0.45,0.45);
+					}
+					else if((i%2 == 0) && (j%2 == 0)){
+						undestructibles(i-9,6-j,0);
+					}
 				}
-				else if((i%2 == 0) && (j%2 == 0)){
-					undestructibles(i-9,6-j,0);
+				if(ARENA.block(i,j).bomb){
+					glPushMatrix();
+					glTranslatef(i-9,6-j,0);
+					glScalef(1.5,1.5,1.5);
+					displaybomb();
+					glPopMatrix();
 				}
-			}
-			if(ARENA.block(i,j).bomb){
-				glPushMatrix();
-				glTranslatef(i-9,6-j,0);
-				glScalef(1.5,1.5,1.5);
-				displaybomb();
-				glPopMatrix();
 			}
 		}
-	}
-	//drawing the bots in their respective positions
-	list<bots>::iterator itr;
-	for(itr=botsList.begin();itr!=botsList.end();itr++){
+		//drawing the bots in their respective positions
+		list<bots>::iterator itr;
+		for(itr=botsList.begin();itr!=botsList.end();itr++){
+			glPushMatrix();
+			glTranslatef(itr->Xpos,itr->Ypos,0);
+			glRotatef(90*(itr->direction),0,0,1);
+			glRotatef(-90,1,0,0);
+			displaybot();
+			glPopMatrix();
+		}
+		//drawing the base
+		base(0,0,0.7,8.5,5.5,0.2);
+		//drawing the borders
+		borders(0,5.6,0.5,8.5,0.1,0.2);
+		borders(0,-5.6,0.5,8.5,0.1,0.2);
+		borders(8.6,0,0.5,0.1,5.5,0.2);
+		borders(-8.6,0,0.5,0.1,5.5,0.2);
+		//displaying the hero
 		glPushMatrix();
-		glTranslatef(itr->Xpos,itr->Ypos,0);
-		glRotatef(90*(itr->direction),0,0,1);
-		glRotatef(-90,1,0,0);
-		displaybot();
+		glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
+		glRotatef(90*(neo.heroDirection),0,0,1);
+		neo.displayhero();
 		glPopMatrix();
 	}
-	//drawing the base
-	base(0,0,0.7,8.5,5.5,0.2);
-	//drawing the borders
-	borders(0,5.6,0.5,8.5,0.1,0.2);
-	borders(0,-5.6,0.5,8.5,0.1,0.2);
-	borders(8.6,0,0.5,0.1,5.5,0.2);
-	borders(-8.6,0,0.5,0.1,5.5,0.2);
-	//displaying the hero
-	glPushMatrix();
-	glTranslatef(neo.heroXpos,neo.heroYpos,-1.34);
-	glRotatef(90*(neo.heroDirection),0,0,1);
-	neo.displayhero();
-	glPopMatrix();	
+
+	
 	//drawing everything into the second buffer
 	glFlush();
 	//swapping the second buffe with the first
@@ -263,7 +277,7 @@ void keyboardKeys(unsigned char key, int x, int y){
 				dropABomb();
 			}
 			break;
-		case 27://pausing the game
+		case 27://pausing the game when escape is pressed
 			finishGame(2);
 			break;
 	}
@@ -368,12 +382,14 @@ void blastBomb(){
 	bombQueue.pop();
 	int powerupPos[]={i-1,j,i,j-1,i+1,j,i,j+1},temp1,temp2;
 	//staring a glutTimerFunction for countdown
-	//of disappearance of the bomb
+	//of disappearance of the powerup
 	for(int k=0;k<4;k++){
 		temp1=powerupPos[2*k];
 		temp2=powerupPos[2*k+1];
 		if(1<=temp1 && 17>=temp1 && 1<=temp2 && 17>=temp2){
-			glutTimerFunc(5000,timer,-(100*temp1+temp2));
+			if(ARENA.block(temp1,temp2).powerup != 2){
+				glutTimerFunc(5000,timer,-(100*temp1+temp2));
+			}
 		}
 	}
 	//implementation of chain bomb blasting
@@ -507,10 +523,12 @@ void finishGame(int i){
 	//1 for gameover and lost
 	//2 for pausing the game
 	if(i == 0){
-		cout<<"finished first"<<endl;
+		win=true;
+		glutPostRedisplay();
 	}
 	else if(i == 1){
-		cout<<"finished second"<<endl;
+		lose=true;
+		glutPostRedisplay();
 	}
 	else if(i == 2){
 		cout<<"finished third"<<endl;
@@ -534,7 +552,7 @@ int main(int argc, char* argv[]){
    // Create window
   glutInitWindowSize(700,700);
   glutInitWindowPosition(100,100);
-  glutCreateWindow("Arena");
+  glutCreateWindow("Bomberman3D");
  
   //  Enable Z-buffer depth test
   glEnable(GL_DEPTH_TEST);

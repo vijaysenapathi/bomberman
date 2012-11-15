@@ -85,6 +85,67 @@ class bots{
 
 };
 
+void cuboidbot(float cx,float cy, float cz ,float lx,float ly,float lz,float colors[]){
+
+  //FRONT
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[0]/255.0),  (colors[1]/255.0), (colors[2]/255.0));
+  glVertex3f(  cx+lx, cy-ly, cz-lz );
+  glVertex3f(  cx+lx,  cy+ly, cz-lz );
+  glVertex3f( cx-lx,  cy+ly, cz-lz );
+  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glEnd();
+
+ 
+  //BACK
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[0]/255.0),  (colors[1]/255.0), (colors[2]/255.0));
+  glVertex3f(  cx+lx, cy-ly, cz+lz );
+  glVertex3f(  cx+lx,  cy+ly, cz+lz );
+  glVertex3f( cx-lx,  cy+ly, cz+lz );
+  glVertex3f( cx-lx, cy-ly, cz+lz );
+  glEnd();
+ 
+ 
+  //RIGHT
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[3]/255.0),  (colors[4]/255.0), (colors[5]/255.0));
+  glVertex3f( cx+lx, cy-ly, cz-lz );
+  glVertex3f( cx+lx,  cy+ly, cz-lz );
+  glVertex3f( cx+lx,  cy+ly,  cz+lz );
+  glVertex3f( cx+lx, cy-ly,  cz+lz );
+  glEnd();
+ 
+ 
+  //LEFT
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[3]/255.0),  (colors[4]/255.0), (colors[5]/255.0));
+  glVertex3f( cx-lx, cy-ly,  cz+lz );
+  glVertex3f( cx-lx,  cy+ly,  cz+lz );
+  glVertex3f( cx-lx,  cy+ly, cz-lz );
+  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glEnd();
+ 
+  //TOP
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[6]/255.0),  (colors[7]/255.0), (colors[8]/255.0));
+  glVertex3f(  cx+lx,  cy+ly,  cz+lz );
+  glVertex3f(  cx+lx,  cy+ly, cz-lz );
+  glVertex3f( cx-lx,  cy+ly, cz-lz );
+  glVertex3f( cx-lx,  cy+ly,  cz+lz );
+  glEnd();
+ 
+  //BOTTOM
+  glBegin(GL_POLYGON);
+  glColor3f(   (colors[6]/255.0),  (colors[7]/255.0), (colors[8]/255.0));
+  glVertex3f(  cx+lx, cy-ly, cz-lz );
+  glVertex3f(  cx+lx, cy-ly,  cz+lz );
+  glVertex3f( cx-lx, cy-ly,  cz+lz );
+  glVertex3f( cx-lx, cy-ly, cz-lz );
+  glEnd();
+
+}
+
 void face(float cx,float cy, float cz ,float lx,float ly,float lz){
   //Yellow size-FRONT
   glBegin(GL_POLYGON);
@@ -269,10 +330,12 @@ void eye(float cx,float cy, float cz ,float lx,float ly,float lz){
 
 
 void displaybot(){
-	face(0,0,0,0.35,0.25,0.3);
-	hair(0,0.3,0,0.4,0.15,0.4);
-	eye(-0.2,0.1,-0.325,0.05,0.03,0.0125);	
-	eye(0.2,0.1,-0.325,0.05,0.03,0.0125);	
+	float facecolor[]={192,192,192,169,169,169,128,128,128};
+	cuboidbot(0,0,0,0.35,0.25,0.3,facecolor);
+	//face(0,0,0,0.35,0.25,0.3);
+	//hair(0,0.3,0,0.4,0.15,0.4);
+	eye(-0.2,0.2,-0.325,0.05,0.06,0.0125);	
+	eye(0.2,0.2,-0.325,0.05,0.06,0.0125);	
 }
 
 
