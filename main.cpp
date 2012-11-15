@@ -15,7 +15,7 @@
 #include "bot.h"
 #include "timer.h"
 #include "arenagraphics.h"
-#include "gameOver.h"
+#include "gameover.h"
 
 using namespace std;
 
@@ -463,7 +463,7 @@ void timer(int i){
 		for(itr=botsList.begin();itr != botsList.end();itr++){
 		ibot=9+floor((itr->Xpos)+0.5);
 		jbot=6-floor((itr->Ypos)+0.5);
-		if((abs(ipos-ibot)+abs(jpos-jbot)) == 0){
+		if((abs(ipos-ibot)+abs(jpos-jbot)) == 0 && !win){
 			finishGame(1);
 		}
 		}
